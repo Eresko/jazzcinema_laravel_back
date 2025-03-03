@@ -1,0 +1,39 @@
+{
+	"authHost": "http://localhost",
+	"authEndpoint": "/broadcasting/auth",
+	"clients": [
+		{
+			"appId": "eede67bcec0c5261",
+			"key": "4675b85c54c1e8a4cf8d021db90f0e7d"
+		}
+	],
+	"database": "redis",
+	"databaseConfig": {
+		"redis": {
+		 "port": 6380
+		},
+		"sqlite": {
+			"databasePath": "/database/laravel-echo-server.sqlite"
+		}
+	},
+	"devMode": true,
+	"host": null,
+	"port": "6301",
+	"protocol": "https",
+	"socketio": {},
+	"secureOptions": 67108864,
+	"sslCertPath": "/etc/ssl/2023/domain.tapper.cloud.crt",
+	"sslKeyPath": "/etc/ssl/2023/domain.tapper.cloud_private.key",
+	"sslCertChainPath": "",
+	"sslPassphrase": "",
+	"subscribers": {
+		"http": true,
+		"redis": true
+	},
+	"apiOriginAllow": {
+		"allowCors": true,
+		"allowOrigin": "0.0.0.0",
+		"allowMethods": " GET, POST",
+		"allowHeaders": ""
+	}
+}

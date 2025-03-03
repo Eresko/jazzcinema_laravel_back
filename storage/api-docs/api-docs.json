@@ -1,0 +1,1115 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "TAPER",
+        "version": "0.1"
+    },
+    "paths": {
+        "/api/admin-panel/get-banners": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "5b62c906ddf7133dcb212332db4390cc",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin-panel/banner/{id}": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение баннера по id",
+                "operationId": "c16d0c70888afc9be6c800d617c881a5",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin-panel/create-banner": {
+            "post": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Создание банера",
+                "operationId": "c0486273d1336a4c1b974c897321cac3",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "file",
+                                    "dateStart",
+                                    "dateStop"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Имя",
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "description": "file",
+                                        "type": "file"
+                                    },
+                                    "dateStart": {
+                                        "description": "file",
+                                        "type": "string"
+                                    },
+                                    "dateStop": {
+                                        "description": "file",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin-panel/update-banner/{id}": {
+            "post": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Изменение банера",
+                "operationId": "f8322557ac2cf2550aa20e70009f407c",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "file",
+                                    "dateStart",
+                                    "dateStop"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Имя",
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "description": "file",
+                                        "type": "file"
+                                    },
+                                    "dateStart": {
+                                        "description": "file",
+                                        "type": "string"
+                                    },
+                                    "dateStop": {
+                                        "description": "file",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin-panel/get-film-copies": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "ad7f92e8053bf38bcb39dcff6c09797a",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin-panel/get-film-copy/{id}": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение баннера по id",
+                "operationId": "c46f3194d2c7e33f8de98a1a92ff3f96",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin-panel/update-film-copy/{id}": {
+            "post": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Store",
+                "operationId": "63a1f6e5c3fa9e399e623fdbc1c96dd7",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "file",
+                                    "dateStart",
+                                    "dateStop"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Имя",
+                                        "type": "string"
+                                    },
+                                    "file": {
+                                        "description": "file",
+                                        "type": "file"
+                                    },
+                                    "dateStart": {
+                                        "description": "file",
+                                        "type": "string"
+                                    },
+                                    "dateStop": {
+                                        "description": "file",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/auth/user/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Auth manager",
+                "operationId": "0defdf852b4dad70e33dde9ee4cf6380",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "description": "логин пользователя",
+                                        "type": "string",
+                                        "example": "123123"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "123123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/banner": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "ca1284af1e694675daf616380d1183ff",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/export/export-filmcopy": {
+            "get": {
+                "tags": [
+                    "Export"
+                ],
+                "summary": "Export filmcopy",
+                "operationId": "abbaaaf9db94e38f8798bf672547c080",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/booking/reservation-not-select": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "ef761d609be7bb4551cab4e0eaa09a94",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/current": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "59f6a9ea8f6d085ba65abd7ab93e5b40",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/future": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение списка фильмов предстоящих в прокате",
+                "operationId": "5b901decc6488d2c30109e1cda0bf9eb",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/ps": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение списка фильмов в киноклубе",
+                "operationId": "0263e968487b1055fcab4ffb416cb2d8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/retro": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение списка фильмов ретро",
+                "operationId": "2842e75df07e0e179e2a50dbc9388cfc",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/not-only-jazz": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение списка фильмов концертов",
+                "operationId": "dbc26a59fa7df5cbc22f286f71676dfd",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/specific/{id}": {
+            "get": {
+                "tags": [
+                    "Фильмокопии"
+                ],
+                "summary": "Получение фильма по id",
+                "operationId": "708db9a81c25138257977ec5b26a3204",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/movie-schedule": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "50cbc24b74b5472665e138a7951fc6a9",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/movie-schedule/{performance}": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "0a081d1317fecea38e1ef3858c10fce4",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/status/{performance}": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "ce6041f6f5e429699b0d9794bbcf157d",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/film-copy/status-auth/{performance}": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "0b51d1c8422c48fcdc40a15ddd6d1735",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/halls/": {
+            "get": {
+                "tags": [
+                    "ЗАЛ"
+                ],
+                "summary": "Схема зала всеъ залов",
+                "operationId": "b4364de64fcc7b59d8fa3d963534876e",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/halls/{id}": {
+            "get": {
+                "tags": [
+                    "ЗАЛ"
+                ],
+                "summary": "Схема определенного зала но номеру",
+                "operationId": "47de1ee9078e28424bf8bc8b2386fef5",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/scheme/{performance}": {
+            "get": {
+                "tags": [
+                    "ЗАЛ"
+                ],
+                "summary": "Схема зала по сеансу",
+                "operationId": "b63c7aa2790d6eadb2818b22f0fa12fc",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/hand-book/banner": {
+            "get": {
+                "tags": [
+                    "Справочник"
+                ],
+                "summary": "Получение баннеров на главной",
+                "operationId": "ce8d8f3cd65ac149d8d6f0a243d8e5c0",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/auth/phone": {
+            "post": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Авторизация по дозвону",
+                "operationId": "bbf5ccd59c125881cfe9aa1d96483a63",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "description": "телефон пользователя",
+                                        "type": "string",
+                                        "example": "89999997777"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/auth/check-sms-code": {
+            "post": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Авторизация по коду из sms или дозвона",
+                "operationId": "aea3d014fcb3159d7e87eafb58ba63b1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "description": "телефон пользователя",
+                                        "type": "string",
+                                        "example": "89999997777"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/auth": {
+            "post": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Авторизация по коду из sms или дозвона",
+                "operationId": "c6bb6cc5c5d993d58287f607c4d0398b",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "description": "Логин пользователя",
+                                        "type": "string",
+                                        "example": "test"
+                                    },
+                                    "password": {
+                                        "description": "пароль пользователя",
+                                        "type": "string",
+                                        "example": "qwerty"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/auth/check-token": {
+            "get": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Проверка токена",
+                "operationId": "93514d8fd34f20f03cd7f18ab861cb24",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/auth/test": {
+            "get": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Проверка токена",
+                "operationId": "83fbdc781a3c653f5ef20a0b299e88ca",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/privilege": {
+            "get": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Привелегии пользователя",
+                "operationId": "137341bc7f8cff0dabb8cc0f6b9e0406",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/cards": {
+            "get": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Получить карты пользователя",
+                "operationId": "bde31b2505648ebefe262e3d05ad8786",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/profile": {
+            "get": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Получить карты пользователя",
+                "operationId": "8ef8a8eee893778e21462248c102c7bc",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/reservation": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "f22bdaeb64b1ac0330ddcebcb978da0b",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/update": {
+            "post": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Авторизация по дозвону",
+                "operationId": "b442d9cf1cc720112ee889e62b6c571e",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "id"
+                                ],
+                                "properties": {
+                                    "id": {
+                                        "description": "user id",
+                                        "type": "number",
+                                        "example": "1"
+                                    },
+                                    "fio": {
+                                        "description": "user fio",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "email": {
+                                        "description": "user email",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "datebirth": {
+                                        "description": "user datebirth",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "gender": {
+                                        "description": "user gender",
+                                        "type": "number",
+                                        "example": "1"
+                                    },
+                                    "password": {
+                                        "description": "user password",
+                                        "type": "number",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/message": {
+            "post": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Авторизация по дозвону",
+                "operationId": "a9d0f3572ec6ff3b1e961eecadf96052",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "message",
+                                    "format",
+                                    "photo",
+                                    "theme"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "user email",
+                                        "type": "number",
+                                        "example": "1"
+                                    },
+                                    "message": {
+                                        "description": "user message",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "format": {
+                                        "description": "user format",
+                                        "type": "string",
+                                        "example": "1"
+                                    },
+                                    "photo": {
+                                        "description": "user photo",
+                                        "type": "file",
+                                        "example": "1"
+                                    },
+                                    "theme": {
+                                        "description": "user theme",
+                                        "type": "string",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "bearerAuth",
+                "in": "header",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Админ панель",
+            "description": "Админ панель"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Export",
+            "description": "Export"
+        },
+        {
+            "name": "Фильмокопии",
+            "description": "Фильмокопии"
+        },
+        {
+            "name": "ЗАЛ",
+            "description": "ЗАЛ"
+        },
+        {
+            "name": "Справочник",
+            "description": "Справочник"
+        },
+        {
+            "name": "USERS",
+            "description": "USERS"
+        }
+    ]
+}
