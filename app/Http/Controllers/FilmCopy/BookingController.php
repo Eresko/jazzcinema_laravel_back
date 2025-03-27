@@ -8,7 +8,6 @@ use Illuminate\Http\Response;
 use App\Services\FilmCopy\BookingServices;
 use Illuminate\Http\Request;
 
-
 class BookingController extends Controller
 {
     /**
@@ -34,7 +33,7 @@ class BookingController extends Controller
      */
     public function reservationNotSelect(ReservationNotSelectRequest $request)
     {
-        
+
         return response()->json(
             app(BookingServices::class)->reservationNotSelect($request->toDto()),
             200

@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginUserRequest;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Services\Halls\HallServices;
+
 class SchemeHallsController extends Controller
 {
     /**
@@ -43,7 +44,7 @@ class SchemeHallsController extends Controller
      *     )
      * )
      */
-    public function get(Request $request,$id)
+    public function get(Request $request, $id)
     {
 
         return app(HallServices::class)->get($id);
@@ -63,7 +64,7 @@ class SchemeHallsController extends Controller
      *     )
      * )
      */
-    public function byPerformance(Request $request,$performance)
+    public function byPerformance(Request $request, $performance)
     {
         return response()->json(
             app(HallServices::class)->getByPerformance((int)$performance),

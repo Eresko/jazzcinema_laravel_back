@@ -9,8 +9,11 @@ use Illuminate\Support\Collection;
 use App\Dto\FilmCopy\FilmCopyDto;
 class FilmCopyRepository
 {
-    public function get():Collection
+    public function get(string | null $search):Collection
     {
+        if ($search) {
+            return FilmCopy::query()->where('name','like','%'.$search.'%')->orderBy('start_date','DESC')->get();
+        }
         return FilmCopy::query()->orderBy('start_date','DESC')->get();
 
     }

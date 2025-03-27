@@ -3,7 +3,9 @@
 namespace App\Services\Users;
 
 
+use App\Services\Paginator\PaginatorService;
 use Carbon\Carbon;
+use App\Models\User;
 use App\Dto\User\PrivilegeDto;
 use App\Repositories\Users\UserRepository;
 use App\Repositories\Users\RoleRepository;
@@ -14,6 +16,7 @@ use App\Services\Export\UserTicketSoftService;
 use App\Dto\User\GuestExportDto;
 use App\Repositories\Users\CheckCodesRepository;
 use App\Repositories\Users\GuestRepository;
+use App\Repositories\Users\UserPrivilegeRepository;
 
 class UsersServices
 {
@@ -25,22 +28,74 @@ class UsersServices
         protected CallService $callService,
         protected UserTicketSoftService $userTicketSoftService,
         protected CheckCodesRepository $checkCodesRepository,
+        protected PaginatorService $paginatorService,
+        protected UserPrivilegeRepository $userPrivilegeRepository,
         protected GuestRepository $guestRepository
     )
     {
     }
 
     /**
-     * @param string $login
+     * @param int $page
+     * @param string|null $search
+     * @return object
+     */
+    public function list(int $page,string | null $search):object {
+        $users = $this->userRepository->getBySearch($search);
+        return $this->paginatorService->toPagination($users, $page);
+    }
+
+    /**
+     * @param int $id
+     * @return User
+     */
+    public function getById(int $id):User {
+        $user = $this->userRepository->getById($id);
+        //$user->birthday = Carbon::parse($user->birthday)->format('d.m.Y');
+        return $user;
+    }
+
+
+    public function test() {
+        $user = $this->userRepository->getById(16648);
+        $user->update(['password' => 'jkjhrrn6387']);
+
+    }
+
+
+    /**
+     * @param string $phone
      * @param string $password
-     * @return array
+     * @return array|bool
      */
 
-    public function login(string $login,string $password):array
+    public function loginByPhone(string $phone,string $password):array | bool
+    {
+        $phone = $this->formatPhone($phone);
+        $user = $this->userRepository->getByPhoneAndPassword($phone->withSeven,$password);
+        if (empty($user)) {
+            return false;
+        }
+        $role = $this->roleRepository->getById($user->role_id);
+        $token = $this->tokenServices->create($role,$user);
+
+        return ['id' => $user->id,'token' => $token];
+    }
+
+    /**
+     * @param string $login
+     * @param string $password
+     * @return array|bool
+     */
+
+    public function login(string $login,string $password):array | bool
     {
         $user = $this->userRepository->getByLoginAndPassword($login,$password);
+        if (empty($user)) {
+            return false;
+        }
         $role = $this->roleRepository->getById($user->role_id);
-        $token = $this->tokenServices->create($role,$user->id);
+        $token = $this->tokenServices->create($role,$user);
 
         return ['id' => $user->id,'token' => $token];
     }
@@ -89,6 +144,10 @@ class UsersServices
     public function updateProfile(array $optionUser):bool {
         $user = \Auth::user();
 
+        if (!empty($optionUser['password'])) {
+            return $user->update(['password' => $optionUser['password']]);
+        }
+
         return $user->update(
           [
               'name' => !empty($optionUser['fio']) && $user->name != $optionUser['fio'] ? $optionUser['fio'] : $user->name,
@@ -124,13 +183,38 @@ class UsersServices
 
 
     /**
+     * @param int $userId
      * @return PrivilegeDto
      */
-    public function getPrivilege():PrivilegeDto {
+    public function getPrivilege(int $userId):PrivilegeDto {
+        $userPrivilege = $this->userPrivilegeRepository->getByUserId($userId);
+
         return new PrivilegeDto(
-          5,
-          0
+          empty($userPrivilege) ? 5 : $userPrivilege->specified_reservation_limit,
+          0,
+            0,
+            empty($userPrivilege) ? 5 : $userPrivilege->specified_sales_limit,
+            empty($userPrivilege) ? false : $userPrivilege->sales_allowed,
+
         );
+    }
+
+    /**
+     * @param int $userId
+     * @param PrivilegeDto $dto
+     * @return bool
+     */
+    public function updatePrivilege(int $userId,PrivilegeDto $dto):bool {
+        $userPrivilege = $this->userPrivilegeRepository->getByUserId($userId);
+        if (empty($userPrivilege)) {
+            $userPrivilege = $this->userPrivilegeRepository->createOrUpdate($userId);
+        }
+        return $userPrivilege->update([
+            'specified_sales_limit' => $dto->specifiedSalesLimit,
+            'specified_reservation_limit' => $dto->specifiedReservationLimit,
+            'sales_allowed' => $dto->salesAllowed
+
+        ]);
     }
 
 

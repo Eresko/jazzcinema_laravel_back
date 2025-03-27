@@ -26,8 +26,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('export:schedule')
            ->everyMinute();
         $schedule->command('export:guest')
-            //->dailyAt('19:05');
-           ->everyThreeMinutes();
+            ->dailyAt('19:05');
+           //->everyThreeMinutes();
     }
 
     /**

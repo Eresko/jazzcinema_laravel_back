@@ -10,6 +10,7 @@ use App\Services\HandBook\BannerServices;
 use App\Services\FilmCopy\FilmCopyServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdminPanel\FilmCopyUpdateRequest;
+
 class FilmCopyController extends Controller
 {
     /**
@@ -24,6 +25,13 @@ class FilmCopyController extends Controller
      *               type="integer"
      *           )
      *      ),
+     *     @OA\Parameter(
+     *       name="search",
+     *       in="query",
+     *       @OA\Schema(
+     *               type="string"
+     *           )
+     *      ),
      *     @OA\Response(
      *         response="200",
      *         description="",
@@ -36,7 +44,7 @@ class FilmCopyController extends Controller
     public function get(Request $request)
     {
         return response()->json(
-            app(FilmCopyServices::class)->list(empty($request->pages) ? 1 : (int)$request->pages),
+            app(FilmCopyServices::class)->list(empty($request->pages) ? 1 : (int)$request->pages, strlen($request->search) < 2 ? null : $request->search),
             200
         );
 
@@ -63,7 +71,7 @@ class FilmCopyController extends Controller
      *     )
      * )
      */
-    public function getFilmCopy(Request $request,$id)
+    public function getFilmCopy(Request $request, $id)
     {
         return response()->json(
             app(FilmCopyServices::class)->get((int)$id),
@@ -116,14 +124,14 @@ class FilmCopyController extends Controller
      * )
      *
      */
-    public function update(FilmCopyUpdateRequest $request,$id)
+    public function update(FilmCopyUpdateRequest $request, $id)
     {
 
         return app(FilmCopyServices::class)->update(
-            (int)$id,$request->toDto(),
+            (int)$id,
+            $request->toDto(),
             empty($request->file('banner')) ? null : $request->file('banner'),
             empty($request->file('video')) ? null : $request->file('video'),
-
         );
 
     }

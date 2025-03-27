@@ -40,6 +40,6 @@ return [
     'telephone_ip' => [
         "url" =>env('TELEPHONE_IP_URL'),
         "token" =>env('TELEPHONE_IP_TOKEN')
-        ]
-
+        ],
+    'key_crypt' => env('KEY_CRYPT')
 ];

@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Firebase\JWT\JWT;
 use App\Services\HandBook\BannerServices;
 use Illuminate\Http\Request;
+
 class BannerController extends Controller
 {
     /**
@@ -61,7 +62,7 @@ class BannerController extends Controller
      *     )
      * )
      */
-    public function getBanner(Request $request,$id)
+    public function getBanner(Request $request, $id)
     {
         return response()->json(
             app(BannerServices::class)->get((int)$id),
@@ -115,7 +116,7 @@ class BannerController extends Controller
     public function create(Request $request)
     {
 
-        return app(BannerServices::class)->create($request->name,$request->file('file'),$request->dateStart,$request->dateStop);
+        return app(BannerServices::class)->create($request->name, $request->file('file'), $request->dateStart, $request->dateStop);
 
     }
 
@@ -161,10 +162,10 @@ class BannerController extends Controller
      * )
      *
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
 
-        return app(BannerServices::class)->update((int)$id,$request->name,empty($request->file('file')) ? null : $request->file('file') , $request->dateStart,$request->dateStop);
+        return app(BannerServices::class)->update((int)$id, $request->name, empty($request->file('file')) ? null : $request->file('file'), $request->dateStart, $request->dateStop);
 
     }
 
