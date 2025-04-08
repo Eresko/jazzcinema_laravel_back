@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Firebase\JWT\JWT;
 use App\Services\FilmCopy\FilmCopyServices;
 use Illuminate\Http\Request;
+
 class FilmCopyController extends Controller
 {
     /**
@@ -181,7 +182,7 @@ class FilmCopyController extends Controller
      *     )
      * )
      */
-    public function getFilmCopy(Request $request,$id)
+    public function getFilmCopy(Request $request, $id)
     {
         return response()->json(
             app(FilmCopyServices::class)->getFilmCopyById($id),

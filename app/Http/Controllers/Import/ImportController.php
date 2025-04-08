@@ -10,14 +10,12 @@ use App\Services\HandBook\BannerServices;
 use Illuminate\Http\Request;
 use App\Services\Export\CursService;
 
-
 class ImportController extends Controller
 {
-
     public function performanceTimeFrame(Request $request)
     {
         return json_decode(app(CursService::class)
-            ->post(config('services.api_ticket_soft') . 'performance-time-frame/',['dateCurrent' => $request->dateCurrent]));
+            ->post(config('services.api_ticket_soft') . 'performance-time-frame/', ['dateCurrent' => $request->dateCurrent]));
 
     }
 
@@ -46,7 +44,7 @@ class ImportController extends Controller
 
 
     }
-    public function film(Request $request,$film)
+    public function film(Request $request, $film)
     {
 
         return json_decode(app(CursService::class)->get(config('services.api_ticket_soft') . 'film/'.$film));

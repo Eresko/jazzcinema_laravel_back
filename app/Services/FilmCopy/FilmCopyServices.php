@@ -36,10 +36,10 @@ class FilmCopyServices
      * @return object
      */
 
-    public function list(int $page): object
+    public function list(int $page,string | null $search): object
     {
 
-        $halls = $this->filmCopyRepository->get();
+        $halls = $this->filmCopyRepository->get($search);
 
         return $this->paginatorService->toPagination($halls, $page);
     }
@@ -132,14 +132,14 @@ class FilmCopyServices
      * @return Collection
      */
     protected function NotOnlyJazz():Collection {
-        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('not_only_jazz',true);
+        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('publication',1)->where('not_only_jazz',true);
     }
 
     /**
      * @return Collection
      */
     protected function retro():Collection {
-        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('retro',true);
+        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('publication',1)->where('retro',true);
     }
 
 
@@ -147,20 +147,20 @@ class FilmCopyServices
      * @return Collection
      */
     protected function ps():Collection {
-        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('ps',true);
+        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('publication',1)->where('ps',true);
     }
     /**
      * @return Collection
      */
     protected function future():Collection {
-        return $this->filmCopyRepository->get()->where('start_date','>',Carbon::now());
+        return $this->filmCopyRepository->get()->where('start_date','>',Carbon::now())->where('publication',1);
     }
 
     /**
      * @return Collection
      */
     protected function current():Collection {
-        return $this->filmCopyRepository->get()->where('start_date','<',Carbon::now())->where('end_date','>',Carbon::now());
+        return $this->filmCopyRepository->get()->where('start_date','<',Carbon::now())->where('end_date','>',Carbon::now())->where('publication',1);
 
     }
 

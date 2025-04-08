@@ -1,15 +1,19 @@
 <?php
-
 declare(strict_types=1);
 
 namespace App\Dto\User;
 
 class PrivilegeDto
 {
+
     public function __construct(
-        public int $specified_reservation_limit,
-        public int $spent_armor_limit,
-    ) {
+        public int  $specifiedReservationLimit,
+        public int  $spentArmorLimit,
+        public int  $lostSalesLimit = 0,
+        public int  $specifiedSalesLimit = 0,
+        public bool $salesAllowed = false,
+    )
+    {
 
     }
 }

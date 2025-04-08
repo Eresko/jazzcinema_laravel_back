@@ -62,4 +62,30 @@ class HallServices
             unserialize($hall->hall_structure)
         );
     }
+
+
+    /**
+     * @return Collection
+     */
+    public function list():Collection {
+        $halls = $this->hallRepository->getAll();
+        return $halls->map( function ($hall) {
+            return [
+                "id" => $hall->id,
+                "name" => $hall->name,
+                "is_display_schedule" => (bool)$hall->is_display_schedule,
+            ];
+        });
+    }
+
+    /**
+     * @param int $id
+     * @param bool $isDisplaySchedule
+     * @return bool
+     */
+    public function update(int $id, bool $isDisplaySchedule): bool
+    {
+        $halls = $this->hallRepository->getById($id);
+        return $halls->update(['is_display_schedule' => $isDisplaySchedule]);
+    }
 }

@@ -5,6 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Модель "Фильмокопия"
+ *
+ * @property int         $id                             Идентификатор
+ * @property string      $name                           Название фильмокопии
+ * @property string      $actors                         Актеры
+ * @property string      $banners                        Баннеры
+ * @property Carbon|null $created_at                     Дата создания
+ * @property Carbon|null $updated_at                     Дата обновления
+ */
 
 
 class FilmCopy extends Model

@@ -9,11 +9,12 @@ use App\Services\Users\UsersServices;
 use App\Http\Requests\Users\AuthPhoneRequest;
 use App\Http\Requests\Users\CheckCodeRequest;
 use App\Http\Requests\Users\AuthLoginRequest;
+use App\Http\Requests\Users\AuthPasswordRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Users\UserRepository;
+
 class AuthController extends Controller
 {
-
     /**
      * @OA\Post(
      *     path="/api/users/auth/phone",
@@ -120,7 +121,7 @@ class AuthController extends Controller
      */
     public function login(AuthLoginRequest $request)
     {
-        $res = app(UsersServices::class)->loginGuest($request->login,$request->passwrod);
+        $res = app(UsersServices::class)->loginGuest($request->login, $request->passwrod);
         return response()->json(
             $res,
             $res ? 200 : 500
@@ -154,6 +155,50 @@ class AuthController extends Controller
 
     }
 
+
+    /**
+     * @OA\Post(
+     *     path="/api/users/auth/password",
+     *     tags={"USERS"},
+     *     summary="Авторизация по паролю",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *                 type="object",
+     *                 required={"phone","password"},
+     *               @OA\Property(
+     *                     property="phone",
+     *                     description="телефон пользователя",
+     *                     type="string",
+     *                     example="89999997777",
+     *                   ),
+     *                @OA\Property(
+     *                      property="password",
+     *                      description="пароль пользователя",
+     *                      type="string",
+     *                      example="89999997777",
+     *                ),
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function authPassword(AuthPasswordRequest $request)
+    {
+        $res = app(UsersServices::class)->loginByPhone($request->login, $request->password);
+        return response()->json(
+            $res,
+            $res ? 200 : 500
+        );
+
+    }
+
+
     /**
      * @OA\Get(
      *     path="/api/users/auth/test",
@@ -183,7 +228,6 @@ class AuthController extends Controller
                 $payload->toArray(),
                 $token
             ],
-
             200
         );
 

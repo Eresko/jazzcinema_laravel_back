@@ -274,6 +274,96 @@
                 ]
             }
         },
+        "/api/admin-panel/halls": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "bb19949e87423b740010cef52a0e5ee5",
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin-panel/halls/{id}": {
+            "post": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Store",
+                "operationId": "d16f21dfbac1c48169d3c3f7ab888697",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "is_display_schedule"
+                                ],
+                                "properties": {
+                                    "is_display_schedule": {
+                                        "description": "флаг отображения рассписания на сайте",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin-panel/users": {
+            "get": {
+                "tags": [
+                    "Админ панель"
+                ],
+                "summary": "Получение списка баннеров",
+                "operationId": "f3fdf981501b2badbd97ee3f682e0721",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/auth/user/login": {
             "post": {
                 "tags": [
@@ -848,6 +938,48 @@
                 ]
             }
         },
+        "/api/users/auth/password": {
+            "post": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Авторизация по паролю",
+                "operationId": "63b2925ca9cfaac79f2f782cbf246389",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "phone",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "phone": {
+                                        "description": "телефон пользователя",
+                                        "type": "string",
+                                        "example": "89999997777"
+                                    },
+                                    "password": {
+                                        "description": "пароль пользователя",
+                                        "type": "string",
+                                        "example": "89999997777"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/api/users/auth/test": {
             "get": {
                 "tags": [
@@ -1060,6 +1192,23 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/test": {
+            "get": {
+                "tags": [
+                    "USERS"
+                ],
+                "summary": "Получить карты пользователя",
+                "operationId": "6e33ea9833d3b08a714954cd92448ac4",
                 "responses": {
                     "200": {
                         "description": "",

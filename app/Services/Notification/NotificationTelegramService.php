@@ -3,16 +3,30 @@
 namespace App\Services\Notification;
 
 use App\Repositories\HandBook\TelegramRepository;
+use App\Services\Paginator\PaginatorService;
 use Carbon\Carbon;
 use App\Dto\User\MessageDto;
 
 class NotificationTelegramService
 {
 
-    public function __construct(protected TelegramRepository $telegramRepository)
+    public function __construct(
+        protected TelegramRepository $telegramRepository,
+        protected PaginatorService $paginatorService,
+    )
     {
     }
 
+    /**
+     * @param int $page
+     * @return object|__anonymous@758
+     */
+    public function list(int $page):object {
+        $telegrams = $this->telegramRepository->getAll();
+        return $this->paginatorService->toPagination($telegrams,$page);
+    }
+    
+    
     /**
      * @param MessageDto $dto
      * @return bool[]
@@ -61,4 +75,6 @@ class NotificationTelegramService
         curl_close($ch); // Завершаем сеанс cURL
     }
 
+        
+    
 }

@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Firebase\JWT\JWT;
 use App\Services\FilmCopy\ScheduleServices;
 use Illuminate\Http\Request;
+
 class ScheduleController extends Controller
 {
     /**
@@ -62,7 +63,7 @@ class ScheduleController extends Controller
      * )
      */
 
-    public function getScheduleByPerformance(Request $request,$performance)
+    public function getScheduleByPerformance(Request $request, $performance)
     {
         return response()->json(
             app(ScheduleServices::class)->getScheduleByPerformance($performance),
@@ -93,7 +94,7 @@ class ScheduleController extends Controller
      * )
      */
 
-    public function getStatusByPerformance(Request $request,$performance)
+    public function getStatusByPerformance(Request $request, $performance)
     {
         return response()->json(
             app(ScheduleServices::class)->getStatusByPerformance($performance),
@@ -124,7 +125,7 @@ class ScheduleController extends Controller
      * )
      */
 
-    public function getStatusAuthByPerformance(Request $request,$performance)
+    public function getStatusAuthByPerformance(Request $request, $performance)
     {
 
         //$user = \Auth::user();

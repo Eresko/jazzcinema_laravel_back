@@ -45,4 +45,12 @@ class HallRepository
 
         return Hall::query()->whereIn('structure_id',$structureElementIds)->get();
     }
+
+    /**
+     * @param int $id
+     * @return Hall
+     */
+    public function getById(int $id):Hall {
+        return Hall::query()->where('id',$id)->first();
+    }
 }

@@ -83,4 +83,12 @@ class ScheduleRepository
         return Schedule::query()->where('external_performance_id',$externalPerformanceId)->first()->structure_element_id;
     }
 
+    /**
+     * @param Collection $ids
+     * @return Collection
+     */
+    public function getByExternalPerformanceIds(Collection $getByExternalPerformanceIds):Collection {
+        return Schedule::query()->whereIn('external_performance_id',$getByExternalPerformanceIds)->get()->unique('id');
+    }
+
 }

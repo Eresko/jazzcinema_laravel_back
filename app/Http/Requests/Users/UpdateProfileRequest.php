@@ -14,7 +14,7 @@ class UpdateProfileRequest extends BaseRequest
             'email' => 'sometimes|string',
             'datebirth' => 'sometimes|string',
             'gender' => 'sometimes|number',
-            'password' => 'sometimes|number',
+            'password' => 'sometimes|string',
         ];
     }
 

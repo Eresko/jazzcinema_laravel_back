@@ -3,6 +3,7 @@
 namespace App\Services\FilmCopy;
 
 
+use App\Repositories\Halls\HallRepository;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Repositories\Films\ScheduleRepository;
@@ -19,6 +20,7 @@ class ScheduleServices
         protected FilmCopyRepository $filmCopyRepository,
         protected ScheduleRepository $scheduleRepository,
         protected PerformanceStatus  $performanceStatus,
+        protected HallRepository $hallRepository,
     )
     {
     }
@@ -28,8 +30,11 @@ class ScheduleServices
      */
     public function getScheduleByGroupDate(): Collection
     {
+       
         $schedules = $this->scheduleRepository->getCurrent();
+        $halls = $this->hallRepository->getAll()->where('is_display_schedule',0);
         $films = $this->filmCopyRepository->getByFilmCopyExternalIds($schedules->pluck("external_film_copy_id"));
+        $schedules = $schedules->whereNotIn('external_film_copy_id',$films->where('publication',0)->pluck('external_film_copy_id'))->whereNotIn('structure_element_id',$halls->pluck('structure_id'));
         $schedules = $schedules->groupBy("start_date");
         return $schedules->map(function ($schedule) use ($films) {
             $filmCopySchedules = $schedule->groupBy("external_film_copy_id");
@@ -82,10 +87,7 @@ class ScheduleServices
     public function getStatusByPerformance(int $performanceId,User | null $user = null): array
     {
         $schedule = $this->scheduleRepository->getByExternalId($performanceId);
-        $statusPerformance = $this->performanceStatus->getStatusPerformance($performanceId, $schedule->structure_element_id);
-        file_put_contents(storage_path().'/A_SCHEDULE_3.log', print_r($schedule, true ), FILE_APPEND | LOCK_EX); // вывод информации
-
-        return $statusPerformance;
+        return $this->performanceStatus->getStatusPerformance($performanceId, $schedule->structure_element_id);
     }
 
 

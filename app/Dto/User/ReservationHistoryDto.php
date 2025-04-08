@@ -19,6 +19,7 @@ class ReservationHistoryDto
         public string $time,
         public $zal,
         public bool $show_date,
+        public string | null $dateStart = null,
     ) {
 
     }

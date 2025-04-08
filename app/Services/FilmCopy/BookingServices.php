@@ -15,6 +15,7 @@ use App\Services\Paginator\PaginatorService;
 use App\Repositories\Halls\HallRepository;
 use App\Dto\User\ReservationHistoryDto;
 use App\Models\User;
+use App\Repositories\Films\ScheduleRepository;
 
 class BookingServices
 {
@@ -24,6 +25,7 @@ class BookingServices
         protected CardRepository            $cardRepository,
         protected PaginatorService          $paginatorService,
         protected BookingRepository         $bookingRepository,
+        protected ScheduleRepository        $scheduleRepository,
         protected HallRepository            $hallRepository,
     )
     {
@@ -45,13 +47,14 @@ class BookingServices
     }
 
 
-    public function getReservationByUser(User $user,int $page,string $search) {
+    public function getReservationByUser(User $user,int $page,string | null $search) {
 
-        $bookings = $this->bookingRepository->getReservation($user->id,$search);
+        $bookings = $this->bookingRepository->getReservationByUserId($user->id,$search);
         $bookings = $this->paginatorService->toPagination($bookings, $page);
         $structureIds = $bookings->data->pluck('structure_element_id')->unique();
+        $performance = $this->scheduleRepository->getByExternalPerformanceIds($bookings->data->pluck('external_performance_id'));
         $halls = $this->hallRepository->getByStructureElementIds($structureIds);
-        $bookings->data = $bookings->data->map( function ($booking) use ($halls){
+        $bookings->data = $bookings->data->map( function ($booking) use ($halls,$performance){
                     $searchHall = $halls->pluck('structure_id');
                     $keyHall = $searchHall->search((string)$booking->structure_element_id);
                     $structure = unserialize($halls[$keyHall]->hall_structure);
@@ -64,7 +67,7 @@ class BookingServices
                           'row' => $structure[$key]['row'],
                         ];
                     }
-
+                $performanceKey = $performance->pluck('external_performance_id')->search($booking->external_performance_id);
                 return new ReservationHistoryDto(
                     $booking->structure_element_id,
                     Carbon::parse($booking->date)->format('d.m.Y H:i'),
@@ -77,12 +80,97 @@ class BookingServices
                     $seatNumber,
                     Carbon::parse($booking->time)->format('H:i'),
                     $halls[$keyHall]->name,
-                    true
+                    true,
+                    Carbon::parse($performance[$performanceKey]->start_date.' '.$performance[$performanceKey]->start_time)->format('d.m.Y H:i')
                 );
         });
 
 
         return $bookings;
+    }
+
+    /**
+     * @param int $page
+     * @param string|null $search
+     * @param string $dateStart
+     * @param string $dateEnd
+     */
+    public function getReservation(int $page,string | null $search,string $dateStart,string $dateEnd) {
+        $dateStart = Carbon::parse($dateStart);
+        $dateEnd = Carbon::parse($dateEnd)->addDay();
+        $bookings = $this->bookingRepository->getReservation($search,$dateStart,$dateEnd);
+        $bookings = $this->paginatorService->toPagination($bookings, $page);
+        $structureIds = $bookings->data->pluck('structure_element_id')->unique();
+        $halls = $this->hallRepository->getByStructureElementIds($structureIds);
+        $performance = $this->scheduleRepository->getByExternalPerformanceIds($bookings->data->pluck('external_performance_id'));
+        $bookings->data = $bookings->data->map( function ($booking) use ($halls,$performance){
+            $searchHall = $halls->pluck('structure_id');
+            $keyHall = $searchHall->search((string)$booking->structure_element_id);
+            $structure = unserialize($halls[$keyHall]->hall_structure);
+
+            $seatNumber = [];
+            foreach (json_decode($booking->seats) as $itemSeat) {
+                $key = array_search($itemSeat,array_column($structure,'name'));
+                $seatNumber[] = [
+                    'label' => $structure[$key]['label'],
+                    'row' => $structure[$key]['row'],
+                ];
+            }
+            $performanceKey = $performance->pluck('external_performance_id')->search($booking->external_performance_id);
+            return new ReservationHistoryDto(
+                $booking->structure_element_id,
+                Carbon::parse($booking->date)->format('d.m.Y H:i'),
+                $booking->id,
+                $booking->external_performance_id,
+                $booking->name,
+                $booking->reservation_number,
+                $booking->price,
+                json_decode($booking->seats),
+                $seatNumber,
+                Carbon::parse($booking->time)->format('H:i'),
+                $halls[$keyHall]->name,
+                true,
+                Carbon::parse($performance[$performanceKey]->start_date)->format('d.m.Y H:i')
+            );
+        });
+
+
+        return $bookings;
+    }
+
+
+    /**
+     * @param int $id
+     * @return ReservationHistoryDto
+     */
+    public function getById(int $id):ReservationHistoryDto {
+        $booking = $this->bookingRepository->getReservationById($id);
+        $hall = $this->hallRepository->getByStructureElementIds(collect([$booking->structure_element_id]))->first();
+        $performance = $this->scheduleRepository->getByExternalPerformanceIds(collect([$booking->external_performance_id]))->first();
+        $structure = unserialize($hall->hall_structure);
+        $seatNumber = [];
+        foreach (json_decode($booking->seats) as $itemSeat) {
+            $key = array_search($itemSeat,array_column($structure,'name'));
+            $seatNumber[] = [
+                'label' => $structure[$key]['label'],
+                'row' => $structure[$key]['row'],
+            ];
+        }
+        return new ReservationHistoryDto(
+            $booking->structure_element_id,
+            Carbon::parse($booking->date)->format('d.m.Y H:i'),
+            $booking->id,
+            $booking->external_performance_id,
+            $booking->name,
+            $booking->reservation_number,
+            $booking->price,
+            json_decode($booking->seats),
+            $seatNumber,
+            Carbon::parse($booking->time)->format('H:i'),
+            $hall->name,
+            true,
+            Carbon::parse($performance->start_date)->format('d.m.Y H:i')
+        );
     }
 
     /**

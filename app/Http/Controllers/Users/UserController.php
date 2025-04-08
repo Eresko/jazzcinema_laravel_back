@@ -13,7 +13,6 @@ use App\Http\Requests\Users\PushMessageRequest;
 use App\Services\Notification\NotificationTelegramService;
 use Carbon\Carbon;
 
-
 class UserController extends Controller
 {
     /**
@@ -56,7 +55,7 @@ class UserController extends Controller
     public function getProfile(Request $request)
     {
         $user = \Auth::user();
-        $user->birthday = Carbon::parse( $user->birthday)->format('d.m.Y');
+        $user->birthday = Carbon::parse($user->birthday)->format('d.m.Y');
         return response()->json(
             $user,
             200
@@ -96,7 +95,7 @@ class UserController extends Controller
     public function getReservation(Request $request)
     {
         return response()->json(
-            app(BookingServices::class)->getReservationByUser(\Auth::user(),empty($request->pages) ? 1 : (int)$request->pages,$request->search ?? ""),
+            app(BookingServices::class)->getReservationByUser(\Auth::user(), empty($request->pages) ? 1 : (int)$request->pages, $request->search ?? ""),
             200
         );
 
@@ -217,12 +216,36 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function pushMessage (PushMessageRequest $request){
+    public function pushMessage(PushMessageRequest $request)
+    {
         $res = app(NotificationTelegramService::class)->push($request->toDto());
         return response()->json(
             $res,
             $res ? 200 : 500
         );
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/users/test",
+     *     tags={"USERS"},
+     *     summary="Получить карты пользователя",
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function test(Request $request)
+    {
+        return response()->json(
+            app(UsersServices::class)->test(),
+            200
+        );
+
     }
 
 }

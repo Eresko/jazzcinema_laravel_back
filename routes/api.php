@@ -47,10 +47,12 @@ Route::group(['prefix' => 'halls'], function (): void {
 });
 Route::group(['prefix' => 'users'], function (): void {
     Route::get('privilege', [UsersController\SessionController::class, 'getPrivilege']);
+    Route::get('test', [UsersController\UserController::class, 'test']);
     Route::get('auth/test', [UsersController\AuthController::class, 'test']);
     Route::post('auth/phone', [UsersController\AuthController::class, 'authPhone']);
     Route::post('auth', [UsersController\AuthController::class, 'login']);
     Route::post('auth/check-sms-code', [UsersController\AuthController::class, 'checkSmsCode']);
+    Route::post('auth/password', [UsersController\AuthController::class, 'authPassword']);
 
 });
 
@@ -82,14 +84,28 @@ Route::group(['prefix' => 'hand-book'], function (): void {
 
 });
 
-Route::group(['prefix' => 'admin-panel'], function (): void {
+Route::group([
+    'prefix' => 'admin-panel',
+    'middleware' => [ Authenticate::class]
+], function (): void {
     Route::get('get-banners', [AdminPanelController\BannerController::class, 'getListBanner']);
+    Route::get('users', [AdminPanelController\UsersController::class, 'get']);
+    Route::get('users/{id}', [AdminPanelController\UsersController::class, 'getUser']);
+    Route::get('cards/{id}', [AdminPanelController\CardController::class, 'getCards']);
+    Route::get('privilege/{id}', [AdminPanelController\PrivilegeController::class, 'getPrivilege']);
+    Route::post('privilege/{id}', [AdminPanelController\PrivilegeController::class, 'update']);
+    Route::post('users/{id}', [AdminPanelController\UsersController::class, 'updateUser']);
+    Route::get('halls', [AdminPanelController\HallController::class, 'get']);
+    Route::post('halls/{id}', [AdminPanelController\HallController::class, 'update']);
     Route::post('create-banner', [AdminPanelController\BannerController::class, 'create']);
     Route::get('banner/{id}', [AdminPanelController\BannerController::class, 'getBanner']);
     Route::post('update-banner/{id}', [AdminPanelController\BannerController::class, 'update']);
     Route::get('get-film-copies', [AdminPanelController\FilmCopyController::class, 'get']);
     Route::get('get-film-copy/{id}', [AdminPanelController\FilmCopyController::class, 'getFilmCopy']);
     Route::post('update-film-copy/{id}', [AdminPanelController\FilmCopyController::class, 'update']);
+    Route::get('booking', [AdminPanelController\BookingController::class, 'get']);
+    Route::get('notification', [AdminPanelController\NotificationController::class, 'get']);
+
 
 });
 

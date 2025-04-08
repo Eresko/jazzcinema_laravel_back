@@ -42,9 +42,9 @@ class FilmCopyUpdateRequest extends BaseRequest
             $this->input('memorandum'),
             empty($this->input('rating')) ? "" : $this->input('rating'),
             $this->input('producers'),
-            empty($this->input('not_only_jazz')) ? false : $this->input('not_only_jazz'),
-            empty($this->input('ps')) ? false : (bool)$this->input('ps'),
-            empty($this->input('publication')) ? false : ($this->input('publication') == 1),
+            !empty($this->input('not_only_jazz')) && $this->input('not_only_jazz') == 1,
+            !empty($this->input('ps')) && (bool)$this->input('ps') == 1,
+            !empty($this->input('publication')) && $this->input('publication') == 1,
             empty($this->input('retro')) ? false : $this->input('retro'),
             empty($this->input('directors')) ? "" : $this->input('directors'),
         );

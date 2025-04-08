@@ -7,8 +7,6 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Services\Users\UsersServices;
 
-
-
 class SessionController extends Controller
 {
     /**
@@ -27,8 +25,9 @@ class SessionController extends Controller
      */
     public function getPrivilege(Request $request)
     {
+        $user =  \Auth::user();
         return response()->json(
-            app(UsersServices::class)->getPrivilege(),
+            app(UsersServices::class)->getPrivilege($user->id),
             200
         );
 

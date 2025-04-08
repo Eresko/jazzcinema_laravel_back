@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginUserRequest;
 use Illuminate\Http\Response;
-
 use App\Services\Users\UsersServices;
+
 class UserController extends Controller
 {
     /**
@@ -43,7 +43,7 @@ class UserController extends Controller
     public function login(LoginUserRequest $request)
     {
 
-        return app(UsersServices::class)->login($request->login,$request->password);
+        return app(UsersServices::class)->login($request->login, $request->password);
     }
 
 

@@ -8,6 +8,24 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Models\Cast\PasswordHash;
+
+/**
+ * Модель "Пользователь"
+ *
+ * @property int         $id                          Идентификатор
+ * @property string      $name                        Имя пользователя
+ * @property string      $email                       Электронная почта пользователя
+ * @property string      $phone                       Номер телефона пользователя
+ * @property string      $password                    Пароль пользователя в hash_hmac
+ * @property int         $external_id                 Идентификатор пользователя из кассовой системы
+ * @property int         $role_id                     Идентификатор роли
+ * @property bool        $gender                      Пол пользователя
+ * @property Carbon|null $birthday                    Дата рождения пользователя
+ * @property Carbon|null $created_at                  Дата создания
+ * @property Carbon|null $updated_at                  Дата обновления
+ */
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -29,6 +47,10 @@ class User extends Authenticatable implements JWTSubject
         'birthday',
     ];
 
+
+    protected  $casts = [
+        'password' => PasswordHash::class,
+    ];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -39,14 +61,7 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    
 
     public function getJWTIdentifier()
     {
