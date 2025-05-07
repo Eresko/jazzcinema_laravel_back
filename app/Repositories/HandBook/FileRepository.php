@@ -2,13 +2,13 @@
 
 namespace App\Repositories\HandBook;
 
-
 use Carbon\Carbon;
 use App\Models\File;
 use Illuminate\Support\Collection;
+
 class FileRepository
 {
-    public function create($name,string $type,int $typeId):File
+    public function create($name, string $type, int $typeId): File
     {
         return File::query()->create([
             'name' => $name,
@@ -17,13 +17,23 @@ class FileRepository
         ]);
 
     }
-    public function getById(int $id,string $type) {
-        return File::query()->where('type_id',$id)->where('type',$type)->first();
+    public function getById(int $id, string $type)
+    {
+        return File::query()->where('type_id', $id)->where('type', $type)->first();
     }
 
 
-    public function delete(int $id,string $type) {
-        return File::query()->where('type_id',$id)->where('type',$type)->first()->delete();
+    public function delete(int $id, string $type)
+    {
+        return File::query()->where('type_id', $id)->where('type', $type)->first()->delete();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function get(): Collection
+    {
+        return File::query()->get();
     }
 
 

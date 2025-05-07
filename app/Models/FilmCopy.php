@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -19,10 +20,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class FilmCopy extends Model
 {
-
-   
-
-
     protected $table = 'film_copies';
 
     protected $fillable = [
@@ -57,8 +54,8 @@ class FilmCopy extends Model
         'rating_world',
         'rating_ex',
         'memorandum',
+        'build_year',
     ];
 
 
 }
-

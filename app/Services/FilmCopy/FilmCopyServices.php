@@ -2,9 +2,7 @@
 
 namespace App\Services\FilmCopy;
 
-
 use Carbon\Carbon;
-
 use App\Repositories\HandBook\BannerRepository;
 use App\Services\Paginator\PaginatorService;
 use Illuminate\Support\Collection;
@@ -15,10 +13,10 @@ use App\Repositories\Films\FilmCopyRepository;
 use App\Repositories\Films\ScheduleRepository;
 use App\Dto\FilmCopy\FilmCopyDto;
 use App\Dto\FilmCopy\FilmCopyOldDto;
+use App\Repositories\HandBook\FileRepository;
 
 class FilmCopyServices
 {
-
     public function __construct(
         protected FilmCopyRepository $filmCopyRepository,
         protected ScheduleRepository $scheduleRepository,
@@ -26,22 +24,33 @@ class FilmCopyServices
         protected PaginatorService $paginatorService,
         protected ImgService       $imgService,
         protected VideoService       $videoService,
-    )
-    {
+        protected FileRepository     $fileRepository,
+    ) {
     }
 
 
     /**
      * @param int $page
-     * @return object
+     * @param string|null $search
+     * @param string|null $sort
+     * @return object|__anonymous@758
      */
 
-    public function list(int $page,string | null $search): object
+    public function list(int $page, string | null $search, string | null $sort): object
     {
+        if (empty($sort)) {
 
-        $halls = $this->filmCopyRepository->get($search);
+            $sortString = 'start_date';
+            $typeSort = "DESC";
+        } else {
+            $sort = explode("_", $sort);
+            $sortString = $sort[0] == 'start' ? 'start_date' : 'end_date';
+            $typeSort = $sort[1] == 'up' ? "ASC" : "DESC";
+        }
 
-        return $this->paginatorService->toPagination($halls, $page);
+        $filmCopies = $this->filmCopyRepository->get($search, $sortString, $typeSort)->where('end_date', '>', Carbon::now());
+
+        return $this->paginatorService->toPagination($filmCopies, $page);
     }
 
 
@@ -55,112 +64,137 @@ class FilmCopyServices
         $filmCopy = $this->filmCopyRepository->getById($id);
         $filmCopy->ps = !(empty($filmCopy->ps) || $filmCopy->ps == 0);
         $filmCopy->not_only_jazz = !(empty($filmCopy->not_only_jazz) || $filmCopy->not_only_jazz == 0);
-        $filmCopy->publication = !(empty($filmCopy->publication) || $filmCopy->publication == 0); 
+        $filmCopy->publication = !(empty($filmCopy->publication) || $filmCopy->publication == 0);
         $filmCopy->retro = !(empty($filmCopy->retro) || $filmCopy->retro == 0);
-        $banners = $this->imgService->get($filmCopy->id,'banner-film-copy');
-        $video = $this->videoService->get($filmCopy->id,'video-film-copy');
+        $banners = $this->imgService->get($filmCopy->id, 'banner-film-copy');
+        $video = $this->videoService->get($filmCopy->id, 'video-film-copy');
         $filmCopy->bannerUrl = empty($banners) ? null : config('services.app_url').'/img/'.$banners->type.'/'.$banners->name;
         if (empty($video)) {
             $filmCopy->videoUrl = null;
-        }
-        else {
+        } else {
             $filmCopy->videoUrl = config('services.app_url').'/img/'.$video->type.'/'.$video->name;
         }
         return $filmCopy;
     }
 
-    public function update(int $id,FilmCopyDto $dto,UploadedFile|null $bannerFile,UploadedFile|null $videoFile):bool {
+    public function update(int $id, FilmCopyDto $dto, UploadedFile|null $bannerFile, UploadedFile|null $videoFile): bool
+    {
         $filmCopy = $this->filmCopyRepository->getById($id);
-
         if ($bannerFile) {
-            $filmCopy->banners = $this->imgService->update($filmCopy->id,'banner-film-copy',$bannerFile);
+            $filmCopy->banners = $this->imgService->update($filmCopy->id, 'banner-film-copy', $bannerFile);
         }
         if ($videoFile) {
-            $this->videoService->update($filmCopy->id,'video-film-copy',$videoFile);
+            $this->videoService->update($filmCopy->id, 'video-film-copy', $videoFile);
         }
-        return $this->filmCopyRepository->update($id,$dto);
+        return $this->filmCopyRepository->update($id, $dto);
+    }
+
+    public function updateMovie(int $id, string $nameFile)
+    {
+        $this->videoService->updateNotLoad($id, 'video-film-copy', $nameFile);
     }
 
     /**
      * @param int $id
      * @return FilmCopyOldDto
      */
-    public function getFilmCopyById(int $id):FilmCopyOldDto {
+    public function getFilmCopyById(int $id): FilmCopyOldDto
+    {
         $filmCopy = $this->filmCopyRepository->getById($id);
-        $banners = $this->imgService->get($filmCopy->id,'banner-film-copy');
+        $banners = $this->imgService->get($filmCopy->id, 'banner-film-copy');
         $schedules = $this->scheduleRepository->getCurrentByFilmCopyId($filmCopy->external_film_copy_id);
-        $schedules = $this->scheduleServices->getScheduleByGroupDateForFilm($schedules,$filmCopy);
+        $schedules = $this->scheduleServices->getScheduleByGroupDateForFilm($schedules, $filmCopy);
 
         return new FilmCopyOldDto(
             $filmCopy->id,
             $filmCopy->name,
-            explode(",",$filmCopy->actors),
+            explode(",", $filmCopy->actors),
             empty($banners) ? "" : config('services.app_url').'/img/'.$banners->type.'/'.$banners->name,
             $filmCopy->start_date,
             $filmCopy->end_date,
-            explode(",",$filmCopy->genre),
+            explode(",", $filmCopy->genre),
             $filmCopy->duration,
             $filmCopy->external_film_copy_id,
-            explode(",",$filmCopy->directors),
+            explode(",", $filmCopy->directors),
             Carbon::parse($filmCopy->start_date)->format('Y'),
-            explode(",",$filmCopy->country),
+            explode(",", $filmCopy->country),
             $filmCopy->description ?? "",
             false,
             array_values($schedules->toArray()),
             "11111"
-
         );
     }
 
 
-    public function getFilmCopy(string $type):Collection {
+    public function getFilmCopy(string $type): Collection
+    {
         $filmCopies = $this->$type();
         return $filmCopies->each(function ($filmCopy) {
-            $posters = $this->imgService->get($filmCopy->id,'banner-film-copy');
+            $posters = $this->imgService->get($filmCopy->id, 'banner-film-copy');
             if (empty($posters)) {
                 $filmCopy->posters = null;
-            }
-            else {
+            } else {
                 $filmCopy->posters = config('services.app_url').'/img/'.$posters->type.'/'.$posters->name;
             }
             return $filmCopy;
-        })->where("posters","!=",NULL);
+        })->where("posters", "!=", null);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function listRepositoryFile(): array
+    {
+        $dirFiles = scandir(public_path().'/img/video-film-copy');
+        $files = $this->fileRepository->get()->where('type', 'video-film-copy')->pluck('name')->toArray();
+        $response = [];
+        foreach ($dirFiles as $dirFile) {
+            if (($dirFile != '..') && ($dirFile != '.') && !in_array($dirFile, $files)) {
+                $response[] =  $dirFile;
+            }
+        }
+        return $response;
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function NotOnlyJazz(): Collection
+    {
+        return $this->filmCopyRepository->get(null)->where('end_date', '>', Carbon::now())->where('publication', 1)->where('not_only_jazz', true);
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function retro(): Collection
+    {
+        return $this->filmCopyRepository->get(null)->where('end_date', '>', Carbon::now())->where('publication', 1)->where('retro', true);
     }
 
 
     /**
      * @return Collection
      */
-    protected function NotOnlyJazz():Collection {
-        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('publication',1)->where('not_only_jazz',true);
+    protected function ps(): Collection
+    {
+        return $this->filmCopyRepository->get(null)->where('end_date', '>', Carbon::now())->where('publication', 1)->where('ps', true);
+    }
+    /**
+     * @return Collection
+     */
+    protected function future(): Collection
+    {
+        return $this->filmCopyRepository->get(null)->where('start_date', '>', Carbon::now())->where('publication', 1);
     }
 
     /**
      * @return Collection
      */
-    protected function retro():Collection {
-        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('publication',1)->where('retro',true);
-    }
-
-
-    /**
-     * @return Collection
-     */
-    protected function ps():Collection {
-        return $this->filmCopyRepository->get()->where('end_date','>',Carbon::now())->where('publication',1)->where('ps',true);
-    }
-    /**
-     * @return Collection
-     */
-    protected function future():Collection {
-        return $this->filmCopyRepository->get()->where('start_date','>',Carbon::now())->where('publication',1);
-    }
-
-    /**
-     * @return Collection
-     */
-    protected function current():Collection {
-        return $this->filmCopyRepository->get()->where('start_date','<',Carbon::now())->where('end_date','>',Carbon::now())->where('publication',1);
+    protected function current(): Collection
+    {
+        return $this->filmCopyRepository->get(null)->where('start_date', '<', Carbon::now())->where('end_date', '>', Carbon::now())->where('publication', 1);
 
     }
 

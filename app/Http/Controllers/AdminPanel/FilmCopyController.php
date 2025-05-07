@@ -10,6 +10,7 @@ use App\Services\HandBook\BannerServices;
 use App\Services\FilmCopy\FilmCopyServices;
 use Illuminate\Http\Request;
 use App\Http\Requests\AdminPanel\FilmCopyUpdateRequest;
+use App\Http\Requests\AdminPanel\MovieUpdateRequest;
 
 class FilmCopyController extends Controller
 {
@@ -25,6 +26,13 @@ class FilmCopyController extends Controller
      *               type="integer"
      *           )
      *      ),
+     *      @OA\Parameter(
+     *        name="sort",
+     *        in="query",
+     *        @OA\Schema(
+     *                type="string"
+     *            )
+     *       ),
      *     @OA\Parameter(
      *       name="search",
      *       in="query",
@@ -44,7 +52,11 @@ class FilmCopyController extends Controller
     public function get(Request $request)
     {
         return response()->json(
-            app(FilmCopyServices::class)->list(empty($request->pages) ? 1 : (int)$request->pages, strlen($request->search) < 2 ? null : $request->search),
+            app(FilmCopyServices::class)->list(
+                empty($request->pages) ? 1 : (int)$request->pages,
+                strlen($request->search) < 2 ? null : $request->search,
+                empty($request->sort) ? null : $request->sort
+            ),
             200
         );
 
@@ -135,6 +147,79 @@ class FilmCopyController extends Controller
         );
 
     }
+    /**
+     * @OA\Get(
+     *     path="/api/admin-panel/get-movies",
+     *     tags={"Админ панель"},
+     *     summary="Получение списка баннеров",
+     *     @OA\Parameter(
+     *       name="page",
+     *       in="query",
+     *       @OA\Schema(
+     *               type="integer"
+     *           )
+     *      ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function getMovies(Request $request)
+    {
+        return response()->json(
+            app(FilmCopyServices::class)->listRepositoryFile(
+                empty($request->pages) ? 1 : (int)$request->pages
+            ),
+            200
+        );
 
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/admin-panel/update-film-copy",
+     *      security={{"bearerAuth":{}}},
+     *     summary="Обновление фильмокопии",
+     *     tags={"Админ панель"},
+     *     summary="Store",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *                 type="object",
+     *                 required={"name","id","name"},
+     *                 @OA\Property(
+     *                     property="id",
+     *                     description="id фильмокопии",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                      property="name",
+     *                      description="Название файла",
+     *                      type="file",
+     *                  ),
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     *
+     */
+    public function updateMovies(MovieUpdateRequest $request)
+    {
+
+        return app(FilmCopyServices::class)->updateMovie(
+            (int)$request->id,
+            $request->name,
+        );
+
+    }
 
 }

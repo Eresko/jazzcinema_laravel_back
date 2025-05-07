@@ -22,6 +22,7 @@ class FilmCopyDto
         public bool $publication,
         public bool $retro,
         public string | null $directors,
+        public int  $duration,
     ) {
 
     }

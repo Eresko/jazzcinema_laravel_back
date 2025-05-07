@@ -2,14 +2,11 @@
 
 namespace App\Services\Export;
 
-
 use Carbon\Carbon;
-
 use App\Repositories\Films\FilmCopyRepository;
 
 class FilmCopy
 {
-
     public function __construct(protected FilmCopyRepository $filmCopyRepository)
     {
     }
@@ -18,17 +15,21 @@ class FilmCopy
     public function run()
     {
         $filmCopiesExport = $this->getFilmCopy();
-        $where = implode(",", array_column($filmCopiesExport,'id'));
+        $where = implode(",", array_column($filmCopiesExport, 'id'));
         $filmCopyIds = $this->getId($where);
 
         foreach ($filmCopiesExport as &$item) {
             $item['filmcopyId'] = $filmCopyIds[$item['id']];
         }
-        $filmCopies = $this->filmCopyRepository->get()->toArray();
-        foreach ($filmCopiesExport aS $filmCopy) {
-            if (!in_array($filmCopy['filmcopyId'],array_column($filmCopies,'external_film_copy_id'))) {
-                $this->filmCopyRepository->create($filmCopy);
-            }
+        $filmCopies = $this->filmCopyRepository->get(null)->toArray();
+        foreach ($filmCopiesExport as $filmCopy) {
+            $this->filmCopyRepository->create($filmCopy);
+
+
+            //            if (!in_array($filmCopy['filmcopyId'],array_column($filmCopies,'external_film_copy_id'))) {
+            //                file_put_contents(storage_path().'/A_FILM_COPY_E.log', print_r($filmCopy, true ), FILE_APPEND | LOCK_EX); // вывод информации
+            //
+            //            }
         }
 
         return $filmCopiesExport;
@@ -40,7 +41,8 @@ class FilmCopy
      * @param string $where
      * @return array
      */
-    protected function getId(string $where):array {
+    protected function getId(string $where): array
+    {
         $url = config('services.api_ticket_soft').'filmCopy/'.$where;
         $out = $this->getCurl($url);
         $filmCopyIds = [];
@@ -49,7 +51,8 @@ class FilmCopy
         }
         return $filmCopyIds;
     }
-    protected function getFilmCopy() {
+    protected function getFilmCopy()
+    {
         $age = $this->getAge();
 
         $currentDate = date('Y-m-d 00:00:00');
@@ -65,7 +68,7 @@ class FilmCopy
                 'duration' => $row->Duration,
                 'url' => $row->FilmWebsite,
                 'disabled' => $row->Disabled,
-                'age' => $age[(string)$row->AgeLimitationID],
+                'age' => empty((string)$row->AgeLimitationID) ? [] : $age[(string)$row->AgeLimitationID],
             ];
 
         }
@@ -75,11 +78,12 @@ class FilmCopy
      * @return array
      */
 
-    protected function getAge():array {
+    protected function getAge(): array
+    {
         $out = $this->getCurl(config('services.api_ticket_soft').'age');
-        file_put_contents(storage_path().'/A_TOKEN_3.log', print_r($out, true ), FILE_APPEND | LOCK_EX); // вывод информации
+        //file_put_contents(storage_path().'/A_TOKEN_3.log', print_r($out, true ), FILE_APPEND | LOCK_EX); // вывод информации
         $age = [];
-        if (!empty($out) && (count(json_decode($out))>0)) {
+        if (!empty($out) && (count(json_decode($out)) > 0)) {
             foreach (json_decode($out) as $item) {
                 $age [(int)$item->Id] = [
                     'name' => $item->Name,
@@ -92,10 +96,11 @@ class FilmCopy
         return $age;
     }
 
-    protected function getCurl($url) {
+    protected function getCurl($url)
+    {
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $out = curl_exec($curl);
         curl_close($curl);
         return $out;

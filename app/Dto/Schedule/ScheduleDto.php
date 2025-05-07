@@ -15,6 +15,7 @@ class ScheduleDto
         public string $zal,
         public $timestamp,
         public string $name = "",
+        public int | null $id = null
     ) {
 
     }

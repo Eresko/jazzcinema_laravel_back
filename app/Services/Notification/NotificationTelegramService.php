@@ -9,24 +9,41 @@ use App\Dto\User\MessageDto;
 
 class NotificationTelegramService
 {
-
     public function __construct(
         protected TelegramRepository $telegramRepository,
         protected PaginatorService $paginatorService,
-    )
-    {
+    ) {
     }
 
     /**
      * @param int $page
      * @return object|__anonymous@758
      */
-    public function list(int $page):object {
+    public function list(int $page): object
+    {
         $telegrams = $this->telegramRepository->getAll();
-        return $this->paginatorService->toPagination($telegrams,$page);
+        return $this->paginatorService->toPagination($telegrams, $page);
     }
-    
-    
+
+
+    /**
+     * @param int $telegram_id
+     * @return bool
+     */
+    public function create(int $telegram_id): bool
+    {
+        return !empty($this->telegramRepository->create($telegram_id));
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        return $this->telegramRepository->delete($id);
+    }
+
     /**
      * @param MessageDto $dto
      * @return bool[]
@@ -43,8 +60,8 @@ class NotificationTelegramService
             "Формат: " . $dto->format . "\n" .
             "Сообщение: " . $dto->message . "\n" .
             "Дата : " . \date('d.m.Y | G:i:s') . "\n";
-        $this->telegramRepository->getAll()->each(function ($telegram) use($message){
-            $this->send($telegram->telegram_id,$message);
+        $this->telegramRepository->getAll()->each(function ($telegram) use ($message) {
+            $this->send($telegram->telegram_id, $message);
         });
 
         return ['success' => true];
@@ -56,12 +73,13 @@ class NotificationTelegramService
      * @param $message
      * @return void
      */
-    private function send($chatId,$message):void {
+    private function send($chatId, $message): void
+    {
         $ch = curl_init();
         $ch_post = [
             CURLOPT_URL => 'https://api.telegram.org/bot' . config('services.telegram_token') . '/sendMessage',
-            CURLOPT_POST => TRUE,
-            CURLOPT_RETURNTRANSFER => TRUE,
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 10,
             CURLOPT_POSTFIELDS => [
                 'chat_id' => $chatId,
@@ -75,6 +93,6 @@ class NotificationTelegramService
         curl_close($ch); // Завершаем сеанс cURL
     }
 
-        
-    
+
+
 }

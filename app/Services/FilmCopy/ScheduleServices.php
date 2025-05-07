@@ -2,8 +2,8 @@
 
 namespace App\Services\FilmCopy;
 
-
 use App\Repositories\Halls\HallRepository;
+use App\Services\Paginator\PaginatorService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use App\Repositories\Films\ScheduleRepository;
@@ -11,18 +11,17 @@ use App\Repositories\Films\FilmCopyRepository;
 use App\Dto\FilmCopy\FilmCopyByScheduleDto;
 use App\Dto\Schedule\ScheduleDto;
 use App\Services\Export\PerformanceStatus;
-use App\Models\FilmCopy;
+use App\Dto\Schedule\GetScheduleDto;
 
 class ScheduleServices
 {
-
     public function __construct(
         protected FilmCopyRepository $filmCopyRepository,
         protected ScheduleRepository $scheduleRepository,
+        protected PaginatorService $paginatorService,
         protected PerformanceStatus  $performanceStatus,
         protected HallRepository $hallRepository,
-    )
-    {
+    ) {
     }
 
     /**
@@ -30,11 +29,11 @@ class ScheduleServices
      */
     public function getScheduleByGroupDate(): Collection
     {
-       
+
         $schedules = $this->scheduleRepository->getCurrent();
-        $halls = $this->hallRepository->getAll()->where('is_display_schedule',0);
+        $halls = $this->hallRepository->getAll()->where('is_display_schedule', 0);
         $films = $this->filmCopyRepository->getByFilmCopyExternalIds($schedules->pluck("external_film_copy_id"));
-        $schedules = $schedules->whereNotIn('external_film_copy_id',$films->where('publication',0)->pluck('external_film_copy_id'))->whereNotIn('structure_element_id',$halls->pluck('structure_id'));
+        $schedules = $schedules->whereNotIn('external_film_copy_id', $films->where('publication', 0)->pluck('external_film_copy_id'))->whereNotIn('structure_element_id', $halls->pluck('structure_id'));
         $schedules = $schedules->groupBy("start_date");
         return $schedules->map(function ($schedule) use ($films) {
             $filmCopySchedules = $schedule->groupBy("external_film_copy_id");
@@ -80,17 +79,56 @@ class ScheduleServices
         );
     }
 
+
+    /**
+     * @param GetScheduleDto $dto
+     * @return ScheduleDto
+     */
+    public function getScheduleByFilter(GetScheduleDto $dto)
+    {
+        $schedule = $this->scheduleRepository->getByDates($dto->startTime, $dto->endTime);
+        $films = $this->filmCopyRepository->getByFilmCopyExternalIds($schedule->pluck('external_film_copy_id'), $dto->search);
+        $schedule =  $schedule->map(function ($scheduleItem) use ($films) {
+            $film = $films->where('external_film_copy_id', $scheduleItem->external_film_copy_id)->first();
+            if (empty($film->name)) {
+                return null;
+            }
+            return new ScheduleDto(
+                $scheduleItem->external_performance_id,
+                $scheduleItem->structure_element_id,
+                $scheduleItem->price,
+                Carbon::parse($scheduleItem->start_date . ' ' . $scheduleItem->start_time)->format('H:i'),
+                Carbon::parse($scheduleItem->start_date . ' ' . $scheduleItem->start_time)->format('d.m.Y H:i'),
+                $scheduleItem->hall,
+                strtotime($scheduleItem->start_date . ' ' . $scheduleItem->start_time),
+                $film->name,
+                $scheduleItem->id
+            );
+        })->whereNotNull();
+
+        return $this->paginatorService->toPagination($schedule, $dto->page);
+    }
+
     /**
      * @param int $performanceId
+     * @param User|null $user
      * @return array
+     *
      */
-    public function getStatusByPerformance(int $performanceId,User | null $user = null): array
+    public function getStatusByPerformance(int $performanceId, User | null $user = null): array
     {
         $schedule = $this->scheduleRepository->getByExternalId($performanceId);
         return $this->performanceStatus->getStatusPerformance($performanceId, $schedule->structure_element_id);
     }
 
-
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool
+    {
+        return $this->scheduleRepository->deleteById($id);
+    }
     /**
      * @param Collection $filmCopySchedules
      * @param Collection $films

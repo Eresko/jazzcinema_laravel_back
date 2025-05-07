@@ -2,15 +2,14 @@
 
 namespace App\Services\FileService;
 
-
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use App\Repositories\HandBook\FileRepository;
 use Illuminate\Support\Facades\Storage;
+
 class VideoService
 {
-
     public function __construct(protected FileRepository $fileRepository)
     {
     }
@@ -22,7 +21,7 @@ class VideoService
      * @param UploadedFile|null $videoFile
      * @return void
      */
-    public function create(int $id,string $type, UploadedFile|null $videoFile): void
+    public function create(int $id, string $type, UploadedFile|null $videoFile): void
     {
 
         if ($videoFile == null) {
@@ -32,7 +31,7 @@ class VideoService
         $nameFile = $id . '-' .$videoFile->getClientOriginalName();
         $filePath = 'public/img/'.$type;
         $videoFile->storeAs($filePath, $nameFile);
-        $this->fileRepository->create($nameFile,$type,$id);
+        $this->fileRepository->create($nameFile, $type, $id);
     }
 
 
@@ -41,21 +40,36 @@ class VideoService
      * @param string $type
      * @return mixed
      */
-    public function get(int $id,string $type) {
-        return $this->fileRepository->getById($id,$type);
+    public function get(int $id, string $type)
+    {
+        return $this->fileRepository->getById($id, $type);
     }
 
 
-    public function update(int $id,string $type, UploadedFile|null $videoFile):void {
-        $file = $this->fileRepository->getById($id,$type);
+    public function update(int $id, string $type, UploadedFile|null $videoFile): void
+    {
+        $file = $this->fileRepository->getById($id, $type);
         if (!empty($file)) {
             $filePath = 'img/'.$type.'/'.$file->name;
-            $this->fileRepository->delete($id,$type);
+            $this->fileRepository->delete($id, $type);
             Storage::disk('public')->delete($filePath);
         }
 
 
-        $this->create($id,$type, $videoFile);
+        $this->create($id, $type, $videoFile);
+
+    }
+
+    public function updateNotLoad(int $id, string $type, string $nameFile): void
+    {
+        $file = $this->fileRepository->getById($id, $type);
+        if (!empty($file)) {
+            $filePath = 'img/'.$type.'/'.$file->name;
+            $this->fileRepository->delete($id, $type);
+            Storage::disk('public')->delete($filePath);
+        }
+
+        $this->fileRepository->create($nameFile, $type, $id);
 
     }
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Firebase\JWT\JWT;
 use App\Services\Export\FilmCopy;
 use Illuminate\Http\Request;
+use App\Services\Export\ScheduleExportService;
 
 class ExportFilmCopyController extends Controller
 {
@@ -29,6 +30,27 @@ class ExportFilmCopyController extends Controller
     {
 
         return app(FilmCopy::class)->run();
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/export/schedule",
+     *     tags={"Export"},
+     *     summary="Export filmcopy",
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function exportSchedule(Request $request)
+    {
+
+        return app(ScheduleExportService::class)->run();
     }
 
 

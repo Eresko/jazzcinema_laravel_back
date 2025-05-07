@@ -2,43 +2,48 @@
 
 namespace App\Repositories\Films;
 
-
 use Carbon\Carbon;
 use App\Models\FilmCopy;
 use Illuminate\Support\Collection;
 use App\Dto\FilmCopy\FilmCopyDto;
+
 class FilmCopyRepository
 {
-    public function get(string | null $search):Collection
+    public function get(string | null $search, string $sort = 'start_date', string  $typeSort = 'asc'): Collection
     {
         if ($search) {
-            return FilmCopy::query()->where('name','like','%'.$search.'%')->orderBy('start_date','DESC')->get();
+            return FilmCopy::query()->where('name', 'like', '%'.$search.'%')->orderBy($sort, $typeSort)->get();
         }
-        return FilmCopy::query()->orderBy('start_date','DESC')->get();
+        return FilmCopy::query()->orderBy($sort, $typeSort)->get();
 
     }
 
-    public function create(array $item) {
+    public function create(array $item)
+    {
 
-        FilmCopy::create([
-            'name' => $item['name'],
-            'duration' => $item['duration'],
-            'url' => $item['url'],
-            'start_date' => Carbon::parse($item['releasedate'])->format('Y-m-d'),
-            'end_date' => Carbon::parse($item['disabled'])->format('Y-m-d'),
-            'film_stills' => "",
-            'ticket_soft_id' => $item['id'],
-            'disabled' => Carbon::parse($item['disabled'])->format('Y-m-d'),
-            'age' => $item['age']['display'],
-            'full_age' => json_encode($item['age']),
-            'external_film_copy_id'  => $item['filmcopyId'],
-
-        ]);
+        FilmCopy::updateOrCreate(
+            [
+                'external_film_copy_id'  => $item['filmcopyId'],
+                'ticket_soft_id' => $item['id'],
+            ],
+            [
+                'name' => $item['name'],
+                'duration' => $item['duration'],
+                'url' => $item['url'],
+                'start_date' => Carbon::parse($item['releasedate'])->format('Y-m-d'),
+                'end_date' => Carbon::parse($item['disabled'])->format('Y-m-d'),
+                'film_stills' => "",
+                'disabled' => Carbon::parse($item['disabled'])->format('Y-m-d'),
+                'age' => empty($item['age']['display']) ? [] : $item['age']['display'],
+                'full_age' => json_encode($item['age']),
+            ]
+        );
     }
 
 
-    public function getById(int $id):FilmCopy {
-        return FilmCopy::query()->where('id',$id)->first();
+    public function getById(int $id): FilmCopy
+    {
+        return FilmCopy::query()->where('id', $id)->first();
     }
 
 
@@ -47,8 +52,9 @@ class FilmCopyRepository
      * @param FilmCopyDto $dto
      * @return bool
      */
-    public function update(int $id,FilmCopyDto $dto):bool {
-        $filmCopy = FilmCopy::query()->where('id',$id)->first();
+    public function update(int $id, FilmCopyDto $dto): bool
+    {
+        $filmCopy = FilmCopy::query()->where('id', $id)->first();
         if (empty($filmCopy)) {
             return false;
         }
@@ -59,8 +65,12 @@ class FilmCopyRepository
      * @param Collection $ids
      * @return Collection
      */
-    public function getByFilmCopyExternalIds(Collection $ids):Collection {
-        return FilmCopy::query()->whereIn('external_film_copy_id',$ids)->get();
+    public function getByFilmCopyExternalIds(Collection $ids, string | null $search = null): Collection
+    {
+        if ($search) {
+            return FilmCopy::query()->whereIn('external_film_copy_id', $ids)->where('name', 'like', '%'.$search.'%')->get();
+        }
+        return FilmCopy::query()->whereIn('external_film_copy_id', $ids)->get();
     }
 
 
@@ -68,7 +78,8 @@ class FilmCopyRepository
      * @param int $id
      * @return FilmCopy
      */
-    public function getByFilmCopyExternalId(int $id):FilmCopy {
-        return FilmCopy::query()->where('external_film_copy_id',$id)->first();
+    public function getByFilmCopyExternalId(int $id): FilmCopy
+    {
+        return FilmCopy::query()->where('external_film_copy_id', $id)->first();
     }
 }

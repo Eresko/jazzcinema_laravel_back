@@ -7,7 +7,7 @@ use Illuminate\Http\Response;
 use Firebase\JWT\JWT;
 use App\Services\Notification\NotificationTelegramService;
 use Illuminate\Http\Request;
-use App\Http\Requests\AdminPanel\UpdateHallRequest;
+use App\Http\Requests\AdminPanel\CreateNotificationRequest;
 
 class NotificationController extends Controller
 {
@@ -38,6 +38,62 @@ class NotificationController extends Controller
             app(NotificationTelegramService::class)->list(empty($request->pages) ? 1 : (int)$request->pages),
             200
         );
+
+    }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/admin-panel/notification/{id}",
+     *     tags={"Админ панель"},
+     *     summary="Удаление записи из списка оповещения по id",
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function delete(Request $request, $id)
+    {
+        return response()->json(
+            app(NotificationTelegramService::class)->delete((int)$id),
+            200
+        );
+
+    }
+    /**
+     * @OA\Post(
+     *     path="/api/admin-panel/notification",
+     *      security={{"bearerAuth":{}}},
+     *     tags={"Админ панель"},
+     *     summary="Создание банера",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *                 type="object",
+     *                 required={"telegram"},
+     *                 @OA\Property(
+     *                     property="telegram",
+     *                     description="telegram",
+     *                     type="string",
+     *                 ),
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     *
+     */
+    public function create(CreateNotificationRequest $request)
+    {
+
+        return app(NotificationTelegramService::class)->create($request->telegram);
 
     }
 }

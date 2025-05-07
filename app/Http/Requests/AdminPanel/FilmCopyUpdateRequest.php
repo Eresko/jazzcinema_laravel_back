@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\AdminPanel;
@@ -6,6 +7,7 @@ namespace App\Http\Requests\AdminPanel;
 use App\Http\Requests\BaseRequest;
 use App\Dto\FilmCopy\FilmCopyDto;
 use Carbon\Carbon;
+
 class FilmCopyUpdateRequest extends BaseRequest
 {
     public function rules(): array
@@ -26,10 +28,13 @@ class FilmCopyUpdateRequest extends BaseRequest
             'publication' => 'sometimes|boolean',
             'retro' => 'sometimes|boolean',
             'directors' => 'sometimes|string',
+            'build_year' => 'sometimes|integer',
+            'duration' => 'sometimes|integer',
         ];
     }
 
-    public function toDto() {
+    public function toDto()
+    {
 
         return  new FilmCopyDto(
             Carbon::parse($this->input('start_date'))->format('Y-m-d'),
@@ -45,8 +50,10 @@ class FilmCopyUpdateRequest extends BaseRequest
             !empty($this->input('not_only_jazz')) && $this->input('not_only_jazz') == 1,
             !empty($this->input('ps')) && (bool)$this->input('ps') == 1,
             !empty($this->input('publication')) && $this->input('publication') == 1,
-            empty($this->input('retro')) ? false : $this->input('retro'),
+            !empty($this->input('retro')) && (bool)$this->input('retro') == 1,
             empty($this->input('directors')) ? "" : $this->input('directors'),
+            empty($this->input('build_year')) ? null : (int)$this->input('build_year'),
+            empty($this->input('duration')) ? 0 : (int)$this->input('duration'),
         );
 
 

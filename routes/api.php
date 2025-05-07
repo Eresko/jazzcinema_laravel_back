@@ -75,8 +75,11 @@ Route::group([
     Route::post('update', [UsersController\UserController::class, 'updateProfile']);
     Route::post('message', [UsersController\UserController::class, 'pushMessage']);
 });
-Route::group(['prefix' => 'export'], function (): void {
+Route::group([
+    'prefix' => 'export'
+], function (): void {
     Route::get('export-filmcopy', [ExportController\ExportFilmCopyController::class, 'exportFilmCopy']);
+    Route::get('schedule', [ExportController\ExportFilmCopyController::class, 'exportSchedule']);
 
 });
 Route::group(['prefix' => 'hand-book'], function (): void {
@@ -89,6 +92,8 @@ Route::group([
     'middleware' => [ Authenticate::class]
 ], function (): void {
     Route::get('get-banners', [AdminPanelController\BannerController::class, 'getListBanner']);
+    Route::get('get-movies', [AdminPanelController\FilmCopyController::class, 'getMovies']);
+    Route::post('update-movies', [AdminPanelController\FilmCopyController::class, 'updateMovies']);
     Route::get('users', [AdminPanelController\UsersController::class, 'get']);
     Route::get('users/{id}', [AdminPanelController\UsersController::class, 'getUser']);
     Route::get('cards/{id}', [AdminPanelController\CardController::class, 'getCards']);
@@ -105,6 +110,10 @@ Route::group([
     Route::post('update-film-copy/{id}', [AdminPanelController\FilmCopyController::class, 'update']);
     Route::get('booking', [AdminPanelController\BookingController::class, 'get']);
     Route::get('notification', [AdminPanelController\NotificationController::class, 'get']);
+    Route::post('notification', [AdminPanelController\NotificationController::class, 'create ']);
+    Route::delete('notification/{id}', [AdminPanelController\NotificationController::class, 'delete']);
+    Route::get('schedule', [AdminPanelController\ScheduleController::class, 'get']);
+    Route::delete('schedule/{id}', [AdminPanelController\ScheduleController::class, 'delete']);
 
 
 });

@@ -2,17 +2,15 @@
 
 namespace App\Repositories\Films;
 
-
 use Carbon\Carbon;
 use App\Models\Schedule;
 use Illuminate\Support\Collection;
 use App\Dto\Schedule\ScheduleExportDto;
 
-
 class ScheduleRepository
 {
-
-    public function create(ScheduleExportDto $dto):Schedule {
+    public function create(ScheduleExportDto $dto): Schedule
+    {
         return Schedule::updateOrCreate(
             [
                 'external_performance_id'   => $dto->performanceId,
@@ -31,47 +29,53 @@ class ScheduleRepository
     /**
      * @return Collection
      */
-    public function list():Collection {
-       return  Schedule::query()->get();
+    public function list(): Collection
+    {
+        return  Schedule::query()->get();
     }
 
     /**
      * @param int $id
      * @return Schedule
      */
-    public function getById(int $id):Schedule {
-        return Schedule::query()->where('id',$id)->first();
+    public function getById(int $id): Schedule
+    {
+        return Schedule::query()->where('id', $id)->first();
     }
 
     /**
      * @param string $date
      * @return Collection
      */
-    public function getByDate(string $date):Collection {
-        return Schedule::query()->where('start_date',$date)->get();
+    public function getByDate(string $date): Collection
+    {
+        return Schedule::query()->where('start_date', $date)->get();
     }
 
     /**
      * @return Collection
      */
-    public function getCurrent():Collection {
-        return  Schedule::query()->where('start_date','>=',Carbon::now()->format('Y-m-d'))->orderBy("start_date")->orderBy("start_time")->get();
+    public function getCurrent(): Collection
+    {
+        return  Schedule::query()->where('start_date', '>=', Carbon::now()->format('Y-m-d'))->orderBy("start_date")->orderBy("start_time")->get();
     }
 
     /**
      * @param int $filmCopyId
      * @return Collection
      */
-    public function getCurrentByFilmCopyId(int $filmCopyId):Collection {
-        return  Schedule::query()->where('start_date','>=',Carbon::now()->format('Y-m-d'))->where('external_film_copy_id',$filmCopyId)->orderBy("start_date")->orderBy("start_time")->get();
+    public function getCurrentByFilmCopyId(int $filmCopyId): Collection
+    {
+        return  Schedule::query()->where('start_date', '>=', Carbon::now()->format('Y-m-d'))->where('external_film_copy_id', $filmCopyId)->orderBy("start_date")->orderBy("start_time")->get();
     }
 
     /**
      * @param int $externalPerformanceId
      * @return Schedule|null
      */
-    public function getByExternalId(int $externalPerformanceId):Schedule | null {
-        return Schedule::query()->where('external_performance_id',$externalPerformanceId)->first();
+    public function getByExternalId(int $externalPerformanceId): Schedule | null
+    {
+        return Schedule::query()->where('external_performance_id', $externalPerformanceId)->first();
     }
 
 
@@ -79,16 +83,40 @@ class ScheduleRepository
      * @param int $externalPerformanceId
      * @return int|null
      */
-    public function getStructureElementIdByExternalId(int $externalPerformanceId):int | null {
-        return Schedule::query()->where('external_performance_id',$externalPerformanceId)->first()->structure_element_id;
+    public function getStructureElementIdByExternalId(int $externalPerformanceId): int | null
+    {
+        return Schedule::query()->where('external_performance_id', $externalPerformanceId)->first()->structure_element_id;
     }
 
     /**
      * @param Collection $ids
      * @return Collection
      */
-    public function getByExternalPerformanceIds(Collection $getByExternalPerformanceIds):Collection {
-        return Schedule::query()->whereIn('external_performance_id',$getByExternalPerformanceIds)->get()->unique('id');
+    public function getByExternalPerformanceIds(Collection $getByExternalPerformanceIds): Collection
+    {
+        return Schedule::query()->whereIn('external_performance_id', $getByExternalPerformanceIds)->get()->unique('id');
+    }
+
+    public function getByDates(Carbon $start, Carbon $end)
+    {
+        return Schedule::query()
+            ->where('start_date', '>=', $start)
+            ->where('start_date', '<=', $end)
+            ->get()
+            ->unique('id');
+    }
+
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById(int $id): bool
+    {
+        $schedule = Schedule::query()->where('id', $id)->first();
+        if (empty($schedule)) {
+            return false;
+        }
+        return $schedule->delete();
     }
 
 }
