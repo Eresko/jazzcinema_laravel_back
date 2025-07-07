@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Users;
 
-
+use App\Dto\User\UpdateStaffDto;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -17,7 +17,7 @@ class UserRepository
      * @return User|null
      */
     public function getByLoginAndPassword(string $login,string $password):User | null {
-        $users = User::query()->where('name',$login)->get();
+        $users = User::query()->where('email',$login)->get();
         return $users->map( function($user) use ($password){
             $passwordEncrypt =  app(CryptService::class)->decode($user->password);
 
@@ -53,9 +53,9 @@ class UserRepository
 
     /**
      * @param string $phone
-     * @return User
+     * @return User|null
      */
-    public function getUserByPhone(string $phone):User {
+    public function getUserByPhone(string $phone):User | null {
         return User::query()->where('phone',$phone)->first();
     }
 
@@ -81,6 +81,33 @@ class UserRepository
         else {
             return User::query()->get();
         }
+    }
+
+    /**
+     * @param string|null $search
+     * @return Collection
+     */
+    public function getStaffBySearch(string | null $search):Collection {
+        if (strlen($search) > 1) {
+            return User::query()
+                ->where('role_id',3)
+                ->where('name','like','%'.$search.'%')
+                ->get();
+
+        }
+        else {
+            return User::query() ->where('role_id',3)->get();
+        }
+    }
+    
+    public function createStaff(UpdateStaffDto $dto):User {
+        return User::create([
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'password' => $dto->password,
+            'gender' => 1,
+            'role_id' => 3
+        ]);
     }
 
 

@@ -15,3 +15,4 @@ yarn-error.log
 /.vscode
 /storage/log
 /storage/api-docs/*.*
+storage/*.log

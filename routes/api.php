@@ -50,6 +50,7 @@ Route::group(['prefix' => 'users'], function (): void {
     Route::get('test', [UsersController\UserController::class, 'test']);
     Route::get('auth/test', [UsersController\AuthController::class, 'test']);
     Route::post('auth/phone', [UsersController\AuthController::class, 'authPhone']);
+    Route::post('auth-check', [UsersController\AuthController::class, 'loginCheck']);
     Route::post('auth', [UsersController\AuthController::class, 'login']);
     Route::post('auth/check-sms-code', [UsersController\AuthController::class, 'checkSmsCode']);
     Route::post('auth/password', [UsersController\AuthController::class, 'authPassword']);
@@ -61,7 +62,11 @@ Route::group([
     'middleware' => [ Authenticate::class]
 ], function (): void {
     Route::post('reservation-not-select', [FilmCopyNameSpace\BookingController::class, 'reservationNotSelect']);
+    Route::post('payment-registration', [FilmCopyNameSpace\BookingController::class, 'paymentRegistration']);
+    Route::get('check-ticket/{id}', [FilmCopyNameSpace\BookingController::class, 'checkTicket']);
+    Route::post('repay/{id}', [FilmCopyNameSpace\BookingController::class, 'repay']);
 });
+
 
 
 Route::group([
@@ -109,11 +114,17 @@ Route::group([
     Route::get('get-film-copy/{id}', [AdminPanelController\FilmCopyController::class, 'getFilmCopy']);
     Route::post('update-film-copy/{id}', [AdminPanelController\FilmCopyController::class, 'update']);
     Route::get('booking', [AdminPanelController\BookingController::class, 'get']);
+    Route::get('sale', [AdminPanelController\SaleController::class, 'get']);
     Route::get('notification', [AdminPanelController\NotificationController::class, 'get']);
     Route::post('notification', [AdminPanelController\NotificationController::class, 'create ']);
     Route::delete('notification/{id}', [AdminPanelController\NotificationController::class, 'delete']);
     Route::get('schedule', [AdminPanelController\ScheduleController::class, 'get']);
     Route::delete('schedule/{id}', [AdminPanelController\ScheduleController::class, 'delete']);
+    Route::get('staff', [AdminPanelController\StaffController::class, 'get']);
+    Route::get('staff/{id}', [AdminPanelController\StaffController::class, 'getStaff']);
+    Route::post('staff/{id}', [AdminPanelController\StaffController::class, 'updateStaff']);
+    Route::post('staff', [AdminPanelController\StaffController::class, 'createStaff']);
+    Route::delete('staff/{id}', [AdminPanelController\StaffController::class, 'deleteStaff']);
 
 
 });

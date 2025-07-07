@@ -49,7 +49,10 @@ class FilmCopyServices
         }
 
         $filmCopies = $this->filmCopyRepository->get($search, $sortString, $typeSort)->where('end_date', '>', Carbon::now());
-
+        $filmCopies = $filmCopies->each(function ($filmCopy) {
+            $filmCopy->name = str_replace(['Чапаев с нами','/'],'',$filmCopy->name);
+            return $filmCopy;
+        });
         return $this->paginatorService->toPagination($filmCopies, $page);
     }
 
@@ -104,10 +107,10 @@ class FilmCopyServices
         $banners = $this->imgService->get($filmCopy->id, 'banner-film-copy');
         $schedules = $this->scheduleRepository->getCurrentByFilmCopyId($filmCopy->external_film_copy_id);
         $schedules = $this->scheduleServices->getScheduleByGroupDateForFilm($schedules, $filmCopy);
-
+        $video = $this->videoService->get($filmCopy->id, 'video-film-copy');
         return new FilmCopyOldDto(
             $filmCopy->id,
-            $filmCopy->name,
+            str_replace(['Чапаев с нами','/'],'',$filmCopy->name),
             explode(",", $filmCopy->actors),
             empty($banners) ? "" : config('services.app_url').'/img/'.$banners->type.'/'.$banners->name,
             $filmCopy->start_date,
@@ -121,7 +124,8 @@ class FilmCopyServices
             $filmCopy->description ?? "",
             false,
             array_values($schedules->toArray()),
-            "11111"
+            "11111",
+            empty($video) ? "" : config('services.app_url').'/img/'.$video->type.'/'.$video->name,
         );
     }
 
@@ -130,6 +134,7 @@ class FilmCopyServices
     {
         $filmCopies = $this->$type();
         return $filmCopies->each(function ($filmCopy) {
+            $filmCopy->name = str_replace(['Чапаев с нами','/'],'',$filmCopy->name);
             $posters = $this->imgService->get($filmCopy->id, 'banner-film-copy');
             if (empty($posters)) {
                 $filmCopy->posters = null;

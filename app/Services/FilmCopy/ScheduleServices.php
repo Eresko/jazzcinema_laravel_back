@@ -75,7 +75,7 @@ class ScheduleServices
             Carbon::parse($schedule->start_date . ' ' . $schedule->start_time)->format('d.m.Y H:i'),
             $schedule->hall,
             strtotime($schedule->start_date . ' ' . $schedule->start_time),
-            $film->name
+            str_replace(['Чапаев с нами','/'],'',$film->name),
         );
     }
 
@@ -101,7 +101,7 @@ class ScheduleServices
                 Carbon::parse($scheduleItem->start_date . ' ' . $scheduleItem->start_time)->format('d.m.Y H:i'),
                 $scheduleItem->hall,
                 strtotime($scheduleItem->start_date . ' ' . $scheduleItem->start_time),
-                $film->name,
+                str_replace(['Чапаев с нами','/'],'',$film->name),
                 $scheduleItem->id
             );
         })->whereNotNull();
@@ -143,7 +143,7 @@ class ScheduleServices
                 return null;
             }
             return new FilmCopyByScheduleDto(
-                $film->name,
+                str_replace(['Чапаев с нами','/'],'', $film->name),
                 $film->external_film_copy_id,
                 $film->id,
                 $film->genre ?? "",

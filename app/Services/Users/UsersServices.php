@@ -55,10 +55,24 @@ class UsersServices
         return $user;
     }
 
+    /**
+     * @param int $id
+     * @return bool
+     */
+    public function deleteById(int $id) {
+
+        $user = $this->userRepository->getById($id);
+        if (empty($user)) {
+            return false;
+        }
+        //$user->birthday = Carbon::parse($user->birthday)->format('d.m.Y');
+        return $user->delete();
+    }
+
 
     public function test() {
-        $user = $this->userRepository->getById(16648);
-        $user->update(['password' => 'jkjhrrn6387']);
+        $user = $this->userRepository->getById(16724);
+        return $user->update(['password' => '123123']);
 
     }
 
@@ -107,18 +121,19 @@ class UsersServices
     public function getAuthPhone(string $phone):bool {
         $phone = $this->formatPhone($phone);
         $code = $this->callService->run($phone->withEight);
+
         if ((empty($code)) || (getType($code) == 'array')) {
             return false;
         }
         $this->checkCodesRepository->createOrUpdate($phone->withSeven, $code);
         $guest = $this->checkExportUser($phone);
         if (!$guest) {
-            $this->userTicketSoftService->getAddress($phone->withSeven);
+            $this->userTicketSoftService->createUser($phone->withSeven);
             $guest = $this->checkExportUser($phone);
         }
         $guestCurrent = $this->userRepository->getUserByPhone($phone->withSeven);
         if (!$guestCurrent) {
-            $this->guestRepository->create($guestCurrent);
+            $this->guestRepository->create($guest);
         }
         return true;
 
@@ -166,6 +181,7 @@ class UsersServices
      */
     protected function checkExportUser(FormatPhoneDto $phone):GuestExportDto | bool {
         $user = $this->userTicketSoftService->getAddress($phone->toArray());
+        file_put_contents(storage_path().'/A_CODE_31.log', print_r($user, true ), FILE_APPEND | LOCK_EX); // вывод информации
         if ($user) {
             $address = $this->userTicketSoftService->getUserFromCustomer($user->id);
             $card = $this->userTicketSoftService->getCard($address->id);

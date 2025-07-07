@@ -26,7 +26,15 @@ class ScheduleExportService
         $structureElements = $this->getStructureElements(array_column($performance,'StructureElementID'));
         $filmCopy = $this->getPerformanceFilmCopy(array_column($performanceTimeFrames,'PerformanceID'));
         $schedules = $this->parseSchedule($performanceTimeFrames,$filmCopy,$performance,$structureElements);
+        $performanceIds = array_column($schedules,'performanceId');
+
         $this->updateSchedule($schedules);
+        $baseSchedules = $this->scheduleRepository->getCurrent()->toArray();
+        foreach ($baseSchedules as $baseSchedule) {
+            if (!in_array($baseSchedule['external_performance_id'],$performanceIds)) {
+                $this->scheduleRepository->deleteById($baseSchedule['id']);
+            }
+        }
     }
 
     /**

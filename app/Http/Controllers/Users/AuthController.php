@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\Users\UsersServices;
 use App\Http\Requests\Users\AuthPhoneRequest;
 use App\Http\Requests\Users\CheckCodeRequest;
+use App\Http\Requests\Users\AuthLoginCheckRequest;
 use App\Http\Requests\Users\AuthLoginRequest;
 use App\Http\Requests\Users\AuthPasswordRequest;
 use Illuminate\Support\Facades\Auth;
@@ -129,6 +130,48 @@ class AuthController extends Controller
 
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/users/auth-check",
+     *     tags={"USERS"},
+     *     summary="Авторизация для проверки билетов",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *                 type="object",
+     *                 required={"login","password"},
+     *               @OA\Property(
+     *                     property="login",
+     *                     description="Логин пользователя",
+     *                     type="string",
+     *                     example="test",
+     *                   ),
+     *               @OA\Property(
+     *                      property="password",
+     *                      description="пароль пользователя",
+     *                      type="string",
+     *                      example="qwerty",
+     *                    ),
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="",
+     *         @OA\MediaType(
+     *              mediaType="application/json"
+     *         )
+     *     )
+     * )
+     */
+    public function loginCheck(AuthLoginCheckRequest $request)
+    {
+        $res = app(UsersServices::class)->login($request->login, $request->password);
+        return response()->json(
+            $res,
+            $res ? 200 : 500
+        );
+
+    }
+
 
     /**
      * @OA\Get(
@@ -215,6 +258,8 @@ class AuthController extends Controller
      */
     public function test(Request $request)
     {
+
+        return app(UserRepository::class)->test();
         $user = app(UserRepository::class)->getUserByPhone('79128060555');
         $token = auth()->claims(['foo' => 'bar'])->login($user);
         $payload = auth()->payload();

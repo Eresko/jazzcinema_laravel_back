@@ -20,6 +20,9 @@ class ReservationHistoryDto
         public $zal,
         public bool $show_date,
         public string | null $dateStart = null,
+        public string | null $paymentStatus = null,
+        public string | null $repaymentStatus = null,
+        public string | null $qr = null,
     ) {
 
     }

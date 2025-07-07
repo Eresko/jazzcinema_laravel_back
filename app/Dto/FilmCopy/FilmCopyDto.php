@@ -22,6 +22,7 @@ class FilmCopyDto
         public bool $publication,
         public bool $retro,
         public string | null $directors,
+        public int | null  $buildYear,
         public int  $duration,
     ) {
 
@@ -45,6 +46,8 @@ class FilmCopyDto
             'publication' => $this->publication,
             'retro' => $this->retro,
             'directors' => $this->directors,
+            'build_year' => $this->buildYear,
+            'duration' => $this->duration,
         ];
     }
 

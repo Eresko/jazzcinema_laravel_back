@@ -5,17 +5,17 @@ namespace App\Http\Controllers\AdminPanel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Response;
 use Firebase\JWT\JWT;
-use App\Services\FilmCopy\BookingServices;
+use App\Services\FilmCopy\SaleServices;
 use Illuminate\Http\Request;
 use App\Repositories\Users\UserRepository;
 
-class BookingController extends Controller
+class SaleController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/admin-panel/booking",
+     *     path="/api/admin-panel/sale",
      *     tags={"Админ панель"},
-     *     summary="Получение списка бронирования",
+     *     summary="Получение списка продаж",
      *     @OA\Parameter(
      *       name="page",
      *       in="query",
@@ -65,13 +65,13 @@ class BookingController extends Controller
         $user = empty($request->user_id) ? null : app(UserRepository::class)->getById((int)$request->user_id);
         return response()->json(
             empty($user) ?
-            app(BookingServices::class)->getReservation(
-                empty($request->page) ? 1 : (int)$request->page,
-                strlen($request->search) < 2 ? null : $request->search,
-                $request->start,
-                $request->end,
-            ) :
-            app(BookingServices::class)->getReservationByUser($user, empty($request->page) ? 1 : (int)$request->page, strlen($request->search) < 2 ? null : $request->search),
+                app(SaleServices::class)->getSale(
+                    empty($request->page) ? 1 : (int)$request->page,
+                    strlen($request->search) < 2 ? null : $request->search,
+                    $request->start,
+                    $request->end,
+                ) :
+                app(SaleServices::class)->getSaleByUser($user, empty($request->page) ? 1 : (int)$request->page, strlen($request->search) < 2 ? null : $request->search),
             200
         );
 
@@ -91,7 +91,7 @@ class BookingController extends Controller
      *     )
      * )
      */
-    public function getBooking(Request $request, $id)
+    public function getUser(Request $request, $id)
     {
         return response()->json(
             app(BookingServices::class)->getById((int)$id),
@@ -99,5 +99,4 @@ class BookingController extends Controller
         );
 
     }
-
 }

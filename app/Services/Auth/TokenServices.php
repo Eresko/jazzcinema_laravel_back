@@ -17,6 +17,7 @@ class TokenServices
             'role' => $role,
             'generation_date' => \Carbon\Carbon::now()
         ];
+        //return auth()->setTTL(3)->claims($tokenPayload)->login($user);
         return auth()->setTTL(720000000)->claims($tokenPayload)->login($user);
 
     }

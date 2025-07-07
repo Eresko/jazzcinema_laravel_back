@@ -20,7 +20,16 @@ class BookingReservationService
         return $client->ReserveSeats2($query);
     }
 
-    public function ReservationPayed(int $reservationId, int $sum)
+
+    /**
+     * ПОметить бронь как оплаченную
+     *
+     * @param int $reservationId
+     * @param int $sum
+     * @return mixed
+     * @throws \SoapFault
+     */
+    public function reservationPayed(int $reservationId, int $sum)
     {
         $client = new \SoapClient(
             config('services.ticket_soft_url')."webpart-all/services/WebPart?WSDL",
@@ -40,7 +49,7 @@ class BookingReservationService
         return $client->ReservationPayed2($query);
     }
 
-    public function sellReservation(int $reservationId, int $sum)
+    public function sellReservation(int $reservationId)
     {
         $client = new \SoapClient(
             config('services.ticket_soft_url')."webpart-all/services/WebPart?WSDL",

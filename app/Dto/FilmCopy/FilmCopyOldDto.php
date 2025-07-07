@@ -22,7 +22,8 @@ class FilmCopyOldDto
         public string $description,
         public bool   $memorandum_show,
         public $schedule,
-        public $P
+        public $P,
+        public string $trailer
     ) {
 
     }

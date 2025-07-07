@@ -6,6 +6,7 @@ namespace App\Repositories\Films;
 use Carbon\Carbon;
 use App\Models\Booking;
 use App\Models\FilmCopy;
+use App\Models\Schedule;
 use Illuminate\Support\Collection;
 use App\Dto\FilmCopy\ResultReservationDto;
 
@@ -26,6 +27,11 @@ class BookingRepository
                 'seats' => $dto->seats,
             ],
         );
+    }
+
+    public function deleteById(int $id): bool
+    {
+        return Booking::query()->where('id',$id)->delete();
     }
 
     /**
@@ -56,16 +62,41 @@ class BookingRepository
                 ])->orderBy('bookings.date','DESC')
                 ->get();
         }
-
-        return FilmCopy::query()
+        $sales = FilmCopy::query()
             ->Join('schedules', 'film_copies.external_film_copy_id', '=', 'schedules.external_film_copy_id')
-            ->Join('bookings', 'bookings.external_performance_id', '=', 'schedules.external_performance_id')
-            ->where('user_id',$userId)
+            ->leftJoin('sales', function ($join) use($userId){
+                $join->on('sales.external_performance_id', '=', 'schedules.external_performance_id');
+                $join->where('sales.user_id',$userId);
+            })
+            ->select([
+                'film_copies.name AS name',
+                'sales.structure_element_id AS structure_element_id',
+                'sales.date AS date',
+                'sales.id AS sales_id',
+                'sales.id AS id',
+                'sales.external_performance_id AS external_performance_id',
+                'sales.reservation_number AS reservation_number',
+                'schedules.price AS price',
+                'schedules.start_time AS time',
+                'schedules.start_date AS show_date',
+                'sales.seats AS seats',
+                'sales.qr AS qr',
+                'sales.payment_status AS payment_status',
+                'sales.repayment_status AS repayment_status',
+            ])->orderBy('sales.date','DESC')->get();
+
+        $booking =  FilmCopy::query()
+            ->Join('schedules', 'film_copies.external_film_copy_id', '=', 'schedules.external_film_copy_id')
+            ->leftJoin('bookings', function($join) use($userId){
+                $join->on('bookings.external_performance_id', '=', 'schedules.external_performance_id');
+                $join->where('bookings.user_id',$userId);
+            })
             ->select([
                 'film_copies.name AS name',
                 'bookings.structure_element_id AS structure_element_id',
                 'bookings.date AS date',
                 'bookings.id AS id',
+                'bookings.id AS bpooking_id',
                 'bookings.external_performance_id AS external_performance_id',
                 'bookings.reservation_number AS reservation_number',
                 'schedules.price AS price',
@@ -73,11 +104,14 @@ class BookingRepository
                 'schedules.start_date AS show_date',
                 'bookings.seats AS seats',
             ])->orderBy('bookings.date','DESC')
+
             ->get();
-        return FilmCopy::search($search, static function ($builder) use ($userId) {
-            return $builder;
-            return $builder->Join('schedules', 'schedules.external_performance_id', '=', 'schedules.external_performance_id');
-        })->get();
+        return $sales->concat($booking)->sortByDesc('date');
+
+//        return FilmCopy::search($search, static function ($builder) use ($userId) {
+//            return $builder;
+//            return $builder->Join('schedules', 'schedules.external_performance_id', '=', 'schedules.external_performance_id');
+//        })->get();
     }
 
     /**
@@ -158,4 +192,28 @@ class BookingRepository
             ])->orderBy('bookings.date','DESC')
             ->first();
     }
+
+    public function getReservationByReservationId(int $reservationId):FilmCopy | null{
+        return FilmCopy::query()
+            ->Join('schedules', 'film_copies.external_film_copy_id', '=', 'schedules.external_film_copy_id')
+            ->Join('bookings', 'bookings.external_performance_id', '=', 'schedules.external_performance_id')
+            ->where('bookings.reservation_id',$reservationId)
+            ->select([
+                'film_copies.name AS name',
+                'bookings.structure_element_id AS structure_element_id',
+                'bookings.date AS date',
+                'bookings.id AS id',
+                'bookings.user_id AS user_id',
+                'bookings.external_performance_id AS external_performance_id',
+                'bookings.reservation_number AS reservation_number',
+                'schedules.price AS price',
+                'schedules.start_time AS time',
+                'schedules.start_date AS show_date',
+                'bookings.seats AS seats',
+            ])->orderBy('bookings.date','DESC')
+            ->first();
+    }
+
+
+
 }

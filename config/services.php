@@ -41,5 +41,7 @@ return [
         "url" =>env('TELEPHONE_IP_URL'),
         "token" =>env('TELEPHONE_IP_TOKEN')
         ],
-    'key_crypt' => env('KEY_CRYPT')
+    'key_crypt' => env('KEY_CRYPT'),
+    'url_qr' => env('URL_QR'),
+    'url_generate_qr' => env('URL_GENERATE_QR')
 ];
